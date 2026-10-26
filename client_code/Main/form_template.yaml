@@ -28,6 +28,7 @@ container:
                   <a href="#journey">📔 My journey</a>
                   <a href="#perks">🎁 Points &amp; perks</a>
                   <a href="#safety">🛟 Safety center</a>
+                  <a href="javascript:void(0)" data-lk-open="overview">🔒 Privacy &amp; Terms</a>
                   <a href="#admin" class="js-admin hidden">🛠️ Admin</a>
                   <hr>
                   <a href="#landing">🏠 About CityCrossers</a>
@@ -40,7 +41,7 @@ container:
         <main class="cc-main" anvil-slot="content"></main>
         <footer class="cc-footer">
           <div>🥾 CityCrossers · long walks, new people, snack stops guaranteed</div>
-          <div style="margin-top:6px"><a href="#safety">Safety center</a> · <a href="#landing">About</a> · <a href="#perks">Perks</a></div>
+          <div style="margin-top:6px"><a href="#safety">Safety center</a> · <a href="#landing">About</a> · <a href="#perks">Perks</a> · <a href="javascript:void(0)" data-lk-open="overview">Privacy &amp; Terms</a></div>
         </footer>
         <div anvil-slot="hidden" style="display:none"></div>
       </div>

@@ -4,7 +4,7 @@ import anvil.js
 import anvil.users
 import anvil.server
 
-from .. import ui, state
+from .. import ui, state, legal
 from ..Landing import Landing
 from ..Discover import Discover
 from ..MapPage import MapPage
@@ -108,6 +108,7 @@ class Main(MainTemplate):
   def _logout(self, e=None):
     anvil.users.logout()
     state.me = None
+    legal.signed_out()
     state.counts = {}
     self.timer.interval = 0
     self.menu.classList.remove('open')

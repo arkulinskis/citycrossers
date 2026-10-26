@@ -6,7 +6,7 @@ import anvil.users
 import anvil.server
 from anvil import TextBox, DatePicker, FileLoader
 
-from . import ui, state
+from . import ui, state, legal
 from .ui import esc
 
 
@@ -35,6 +35,7 @@ class _AuthBox(object):
         <div class="f-name">{ui.field("What should walkers call you?", "name")}</div>
         {ui.field("Email", "email")}
         {ui.field("Password", "pw")}
+        <div class="f-legal">{legal.consent_field()}</div>
         <button type="button" class="cc-btn block lg t-go" data-act="go"></button>
         <div class="switch">
           <span class="t-switch-text"></span> <button type="button" class="cc-link" data-act="switch"></button>
@@ -61,7 +62,7 @@ class _AuthBox(object):
     self._q('.t-go').textContent = 'Create my account' if signup else 'Log in'
     self._q('.t-switch-text').textContent = 'Already walking with us?' if signup else 'New here?'
     self._q('[data-act=switch]').textContent = 'Log in' if signup else 'Create an account'
-    for sel, show in (('.f-name', signup), ('.f-forgot', not signup)):
+    for sel, show in (('.f-name', signup), ('.f-legal', signup), ('.f-forgot', not signup)):
       el = self._q(sel)
       if show:
         el.classList.remove('hidden')
@@ -89,6 +90,8 @@ class _AuthBox(object):
         name = (self.name.text or '').strip()
         if len(name) < 2:
           return self.error("Tell us what to call you (2+ characters).")
+        if not legal.consent_ok(ui.dom(self.component)):
+          return
         anvil.users.signup_with_email(email, pw, remember=True)
         anvil.server.call('update_me', {'display_name': name})
         state.after_login = state.after_login or 'welcome'
