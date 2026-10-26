@@ -6,7 +6,7 @@ container:
       <div class="cc-shell landing-mode">
         <header class="cc-header">
           <div class="cc-header-inner">
-            <a class="cc-logo" href="#discover"><span class="cc-logo-mark">🥾</span><span class="word">City<b>Crossers</b></span></a>
+            <a class="cc-logo" href="#discover"><img class="cc-logo-img" src="_/theme/logo.svg" alt=""><span class="word">City<b>Crossers</b></span></a>
             <nav class="cc-nav">
               <a href="#discover" data-nav="discover"><span class="ico">🧭</span><span>Discover</span></a>
               <a href="#map" data-nav="map"><span class="ico">🗺️</span><span>Map</span></a>

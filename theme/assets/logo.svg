@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <title>CityCrossers</title>
+  <g transform="rotate(-6 32 32)">
+    <rect x="6" y="9.5" width="52" height="51" rx="15" fill="#0E8A5D"/>
+    <rect x="6" y="6" width="52" height="51" rx="15" fill="#17A673"/>
+    <path d="M16 45 C 33 50, 46 40, 34 32 C 24 25, 30 18, 46 19" fill="none" stroke="#fff" stroke-width="4.5"
+          stroke-linecap="round" stroke-dasharray="0.01 6.6"/>
+    <circle cx="16" cy="45" r="4.5" fill="#fff"/>
+    <circle cx="34" cy="32" r="5.5" fill="#FF7A3D" stroke="#fff" stroke-width="2.5"/>
+  </g>
+  <circle cx="50" cy="14" r="8" fill="#FFC83D" stroke="#fff" stroke-width="3"/>
+</svg>

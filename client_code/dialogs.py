@@ -27,7 +27,7 @@ class _AuthBox(object):
       tb.add_event_handler('pressed_enter', lambda **e: self.submit())
     self.component = ui.H(f'''
       <div class="cc-auth">
-        <div class="head"><span class="e">🥾</span>
+        <div class="head"><img src="_/theme/logo.svg" alt="" style="width:64px;height:64px;display:block;margin:0 auto 6px">
           <h2 class="cc-modal-title t-title"></h2>
           <div class="cc-modal-sub t-sub"></div>
         </div>

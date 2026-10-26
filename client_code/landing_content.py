@@ -64,7 +64,7 @@ HTML = f'''
 <div class="lp">
   <div class="lp-wrap">
     <nav class="lp-nav">
-      <a class="cc-logo" href="#landing"><span class="cc-logo-mark">🥾</span><span>City<b>Crossers</b></span></a>
+      <a class="cc-logo" href="#landing"><img class="cc-logo-img" src="_/theme/logo.svg" alt=""><span>City<b>Crossers</b></span></a>
       <div class="links">
         <button data-act="scroll" data-arg="how">How it works</button>
         <button data-act="scroll" data-arg="manifesto">The break manifesto</button>
