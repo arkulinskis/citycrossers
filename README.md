@@ -1,88 +1,64 @@
-# About This [Anvil](https://anvil.works/?utm_source=github:app_README) App
+# CityCrossers 🥾
 
-### Build web apps with nothing but Python.
+**Long walks. New people. Snack stops guaranteed.**
 
-The app in this repository is built with [Anvil](https://anvil.works?utm_source=github:app_README), the framework for building web apps with nothing but Python. You can clone this app into your own Anvil account to use and modify.
+CityCrossers is a walking club app built on [Anvil](https://anvil.works): think modern running clubs for people who prefer
+walking, crossed with a little Tinder (swipe on group walks) and a little LinkedIn (walker profiles and endorsements).
 
-Below, you will find:
-- [How to open this app](#opening-this-app-in-anvil-and-getting-it-online) in Anvil and deploy it online
-- Information [about Anvil](#about-anvil)
-- And links to some handy [documentation and tutorials](#tutorials-and-documentation)
+## What's in the app
 
-## Opening this app in Anvil and getting it online
+| Area | What it does |
+| --- | --- |
+| **Landing page** | Full marketing page: how it works, the "break manifesto", features, points & perks, partner cafés, safety, FAQ. |
+| **Discover** | Swipe deck of walks ranked by a match score (pace, distance, interests). Swipe right to join or request, left to pass. Plus "walkers to meet" cards. |
+| **Map** | Leaflet map of community-pinned places (cafés, food, parks, viewpoints, water, rest), partner deals and walk starts. Anyone can propose a place. |
+| **Plan a walk** | Click the map to build a route, or add existing places. Live distance/time/break estimates, warnings for long stretches without a break, vibes, tags, friends-only or public visibility, host approval, invites. |
+| **Walk page** | Route timeline with ETAs and break lengths, suggested stops with group voting, crew and join requests, group chat, walk-day weather (Open-Meteo), safety panel, "share my plan", invite by email, mark complete. |
+| **After a walk** | Review each stop, endorse your crew, write it into your Journey. |
+| **People & profiles** | Connections, search, suggestions, LinkedIn-style profiles with stats, endorsements, badges, public reviews ("taste map") and journey highlights. |
+| **My Journey** | Personal timeline of walks, journal entries and reviews, with private "notes to future me" and public/private toggles. |
+| **Points & perks** | Points for walking, hosting, meeting new people, reviewing and journaling. Six levels from Stroller to City Crosser, and redeemable perks. |
+| **Safety** | Safety pledge before your first walk, public walks need 3+ spots and host approval, report flow, emergency contact, safety center. |
+| **Admin** | Partner deals for places on the map, place moderation, safety reports, member verification/admin/suspension, perks catalog, demo data. |
 
-### Cloning the app
+## Getting it running in Anvil
 
-Go to the [Anvil Editor](https://anvil.works/build?utm_source=github:app_README) (you might need to sign up for a free account) and click on “Clone from GitHub” (underneath the “Blank App” option):
+1. In the Anvil editor, pull this branch from GitHub (Version History → Git), or clone the repo as a new app.
+2. Anvil will offer to **apply the data table schema** from `anvil.yaml`. Accept it (16 tables).
+3. Run the app and sign up.
+   - The email listed in `ADMIN_EMAILS` (`server_code/common.py`) becomes an **admin** automatically.
+4. The first signed-in visit loads **demo data** (London landmarks, fictional cafés, demo walkers, walks, deals).
+   Remove or reload it from **Admin → Demo data**. Demo walkers can't log in.
 
-<img src="https://anvil.works/docs/version-control/img/git/clone-from-github.png" alt="Clone from GitHub"/>
+Services used: Data Tables, Users (email + password, no email confirmation), Email (invites and notifications).
+External: Leaflet 1.9.4 + CARTO Voyager tiles (no API key), Open-Meteo forecasts (no API key), Google Fonts.
 
-Enter the URL of this GitHub repository. If you're not yet logged in, choose "GitHub credentials" as the authentication method and click "Connect to GitHub".
+## Code map
 
-<img src="https://anvil.works/docs/version-control/img/git/clone-app-from-git.png" alt="Clone App from Git modal"/>
+```
+client_code/
+  Main/            app shell + hash router (#walk/ID, #u/ID, #plan, ...)
+  Landing/         marketing page (markup in landing_content.py)
+  Discover/ MapPage/ WalkEditor/ WalkDetail/ MyWalks/ People/
+  Profile/ ProfileEdit/ Journey/ Perks/ Admin/ Safety/ Notifications/
+  ui.py            constants, HTML builders, formatting, server-call wrapper, chips/stars widgets
+  dialogs.py       auth, safety pledge, place/stop picker, reviews, journal entries, reports, invites
+  mapkit.py        Leaflet wrapper
+  state.py         signed-in user, counts, navigation
+server_code/
+  common.py        users, ids, points, levels, notifications, route maths, match score
+  serial.py        rows → client-safe dicts (no emails or emergency contacts leak)
+  api_walks.py     walks, membership, stops & votes, chat, completion, home feed, map data
+  api_social.py    friends, profiles, endorsements, reports, notifications
+  api_me.py        profile, places, reviews, journal, perks
+  api_admin.py     admin tools
+  seed.py          demo content
+  weather.py       walk-day forecast
+theme/assets/      theme.css (design system), cc.js (swipe, confetti, clipboard)
+```
 
-Finally, click "Clone App".
+## Design
 
-This app will then be in your Anvil account, ready for you to run it or start editing it! **Any changes you make will be automatically pushed back to this repository, if you have permission!** You might want to [make a new branch](https://anvil.works/docs/version-control?utm_source=github:app_README).
-
-### Running the app yourself:
-
-Find the **Run** button at the top-right of the Anvil editor:
-
-<img src="https://anvil.works/docs/img/run-button-new-ide.png"/>
-
-
-### Publishing the app on your own URL
-
-Now you've cloned the app, you can [deploy it on the internet with two clicks](https://anvil.works/docs/deployment/quickstart?utm_source=github:app_README)! Find the **Publish** button at the top-right of the editor:
-
-<img src="https://anvil.works/docs/deployment/img/environments/publish-button.png"/>
-
-When you click it, you will see the Publish dialog:
-
-<img src="https://anvil.works/docs/deployment/img/quickstart/empty-environments-dialog.png"/>
-
-Click **Publish This App**, and you will see that your app has been deployed at a new, public URL:
-
-<img src="https://anvil.works/docs/deployment/img/quickstart/default-public-environment.png"/>
-
-That's it - **your app is now online**. Click the link and try it!
-
-## About Anvil
-
-If you’re new to Anvil, welcome! Anvil is a platform for building full-stack web apps with nothing but Python. No need to wrestle with JS, HTML, CSS, Python, SQL and all their frameworks – just build it all in Python.
-
-<figure>
-<figcaption><h3>Learn About Anvil In 80 Seconds👇</h3></figcaption>
-<a href="https://www.youtube.com/watch?v=3V-3g1mQ5GY" target="_blank">
-<img
-  src="https://anvil-website-static.s3.eu-west-2.amazonaws.com/anvil-in-80-seconds-YouTube.png"
-  alt="Anvil In 80 Seconds"
-/>
-</a>
-</figure>
-<br><br>
-
-[![Try Anvil Free](https://anvil-website-static.s3.eu-west-2.amazonaws.com/mark-complete.png)](https://anvil.works?utm_source=github:app_README)
-
-To learn more about Anvil, visit [https://anvil.works](https://anvil.works?utm_source=github:app_README).
-
-## Tutorials and documentation
-
-### Tutorials
-
-If you are just starting out with Anvil, why not **[try the 10-minute Feedback Form tutorial](https://anvil.works/learn/tutorials/feedback-form?utm_source=github:app_README)**? It features step-by-step tutorials that will introduce you to the most important parts of Anvil.
-
-Anvil has tutorials on:
-- [Building Dashboards](https://anvil.works/learn/tutorials/data-science#dashboarding?utm_source=github:app_README)
-- [Multi-User Applications](https://anvil.works/learn/tutorials/multi-user-apps?utm_source=github:app_README)
-- [Building Web Apps with an External Database](https://anvil.works/learn/tutorials/external-database?utm_source=github:app_README)
-- [Deploying Machine Learning Models](https://anvil.works/learn/tutorials/deploy-machine-learning-model?utm_source=github:app_README)
-- [Taking Payments with Stripe](https://anvil.works/learn/tutorials/stripe?utm_source=github:app_README)
-- And [much more....](https://anvil.works/learn/tutorials?utm_source=github:app_README)
-
-### Reference Documentation
-
-The Anvil reference documentation provides comprehensive information on how to use Anvil to build web applications. You can find the documentation [here](https://anvil.works/docs/overview?utm_source=github:app_README).
-
-If you want to get to the basics as quickly as possible, each section of this documentation features a [Quick-Start Guide](https://anvil.works/docs/overview/quickstarts?utm_source=github:app_README).
+Bright cream background, leaf green for go, tangerine for food stops, sunshine yellow for points.
+Headings in Bricolage Grotesque, body in DM Sans. Routes are dotted "footstep" lines, and food stops are always highlighted:
+there will be breaks.

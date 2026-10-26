@@ -1,0 +1,47 @@
+is_package: true
+container:
+  type: HtmlTemplate
+  properties:
+    html: |
+      <div class="cc-shell landing-mode">
+        <header class="cc-header">
+          <div class="cc-header-inner">
+            <a class="cc-logo" href="#discover"><span class="cc-logo-mark">🥾</span><span class="word">City<b>Crossers</b></span></a>
+            <nav class="cc-nav">
+              <a href="#discover" data-nav="discover"><span class="ico">🧭</span><span>Discover</span></a>
+              <a href="#map" data-nav="map"><span class="ico">🗺️</span><span>Map</span></a>
+              <a href="#plan" data-nav="plan" class="plan"><span class="ico">➕</span><span>Plan<span class="lbl-long"> a walk</span></span></a>
+              <a href="#walks" data-nav="walks"><span class="ico">🥾</span><span><span class="lbl-long">My </span>Walks</span></a>
+              <a href="#people" data-nav="people"><span class="ico">👋</span><span>People</span></a>
+              <a href="#journey" data-nav="journey" class="secondary"><span class="ico">📔</span><span>Journey</span></a>
+            </nav>
+            <div class="cc-header-right">
+              <a class="cc-points-chip" href="#perks" title="Your points"><span>⭐</span><span class="js-points">0</span></a>
+              <a class="cc-icon-btn" href="#notifications" title="Notifications">🔔<span class="cc-badge-dot js-notif hidden">0</span></a>
+              <div class="cc-me">
+                <button type="button" class="cc-me-btn js-me-btn" aria-label="Your menu"><span class="js-avatar"></span></button>
+                <div class="cc-menu">
+                  <div class="head"><b class="js-name">You</b><span class="small muted js-level"></span></div>
+                  <hr>
+                  <a href="#me">🪪 My profile</a>
+                  <a href="#me/edit">✏️ Edit profile</a>
+                  <a href="#journey">📔 My journey</a>
+                  <a href="#perks">🎁 Points &amp; perks</a>
+                  <a href="#safety">🛟 Safety center</a>
+                  <a href="#admin" class="js-admin hidden">🛠️ Admin</a>
+                  <hr>
+                  <a href="#landing">🏠 About CityCrossers</a>
+                  <button type="button" class="js-logout">👋 Log out</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+        <main class="cc-main" anvil-slot="content"></main>
+        <footer class="cc-footer">
+          <div>🥾 CityCrossers · long walks, new people, snack stops guaranteed</div>
+          <div style="margin-top:6px"><a href="#safety">Safety center</a> · <a href="#landing">About</a> · <a href="#perks">Perks</a></div>
+        </footer>
+        <div anvil-slot="hidden" style="display:none"></div>
+      </div>
+components: []
