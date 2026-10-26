@@ -607,7 +607,7 @@ metadata: {title: 'CityCrossers - long walks, new people, snack stops', logo_img
 name: CityCrossers
 native_deps:
   head_html: |-
-    <script src="_/theme/legal-kit.js?v=d700f2273b"></script>
+    <script src="_/theme/legal-kit.js?v=a1917c7b11"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
