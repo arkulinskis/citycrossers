@@ -302,7 +302,7 @@ HTML = f'''
     <footer class="lp-footer">
       <div><b>CityCrossers</b> · walk like the ancestors, snack like the moderns.</div>
       <div><button data-act="safety">Safety</button><button data-act="scroll" data-arg="faq">FAQ</button>
-        <button data-act="partner">Partners</button><button data-lk-open="overview">Privacy &amp; Terms</button><button data-act="login">Log in</button></div>
+        <button data-act="partner">Partners</button><a class="lp-idea" href="https://prepsto.com/#f/wzrzr2f" target="_blank" rel="noopener" data-prepsto-open>Suggest an idea</a><button data-lk-open="overview">Privacy &amp; Terms</button><button data-act="login">Log in</button></div>
     </footer>
   </div>
 </div>

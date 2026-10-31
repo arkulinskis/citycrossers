@@ -770,3 +770,5 @@ body .file-loader label, body .anvil-file-loader .btn {
 .lp-footer { color: var(--muted); display: flex; flex-wrap: wrap; font-size: 14px; gap: 20px; justify-content: space-between; padding: 26px 0 50px; }
 .lp-footer button { background: none; border: 0; color: var(--muted); cursor: pointer; font-family: var(--font-b); font-size: 14px; padding: 0; margin-right: 14px; }
 .lp-footer button:hover { color: var(--ink); }
+.lp-footer .lp-idea { color: var(--muted); font-family: var(--font-b); font-size: 14px; margin-right: 14px; text-decoration: none; }
+.lp-footer .lp-idea:hover { color: var(--ink); }

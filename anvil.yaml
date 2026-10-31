@@ -607,6 +607,8 @@ metadata: {title: 'CityCrossers - long walks, new people, snack stops', logo_img
 name: CityCrossers
 native_deps:
   head_html: |-
+    <!-- Prepsto feedback panel: the footer's Suggest an idea link (data-prepsto-open) opens it -->
+    <script src="https://prepsto.com/_/theme/widget.js" data-prepsto="wzrzr2f" data-button="false" data-label="Suggest an idea" async></script>
     <script src="_/theme/legal-kit.js?v=fe809ea449"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
