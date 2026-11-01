@@ -1,32 +1,42 @@
-"""Landing page markup. Buttons use data-act (handled in the Landing form)."""
+"""Landing page markup. Buttons use data-act (handled in the Landing form). The hero is a live map: a walking route
+marches across the whole city corner, the crew walks it, and the pitch sits in a card on the left."""
 
-HERO_SVG = '''
-<svg viewBox="0 0 500 460" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+ROUTE = "M560 120 C 640 90, 700 170, 760 170 S 860 110, 920 160 S 980 290, 900 330 S 780 380, 840 470 S 1010 520, 1080 460 S 1160 330, 1220 300"
+
+# The hero map: a whole city corner. A walking route marches across it (start, coffee, pastry, park, gelato, finish) and the
+# crew (three avatars) walk it on a loop (SMIL animateMotion). Anchored right so phones still see the route.
+HERO_SVG = f'''
+<svg viewBox="0 0 1280 620" preserveAspectRatio="xMaxYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
   <g stroke="#fff" stroke-width="12" stroke-linecap="round" fill="none" opacity=".95">
-    <path d="M-20 120 L520 60"/><path d="M-20 230 L520 200"/><path d="M-20 360 L520 330"/>
-    <path d="M90 -20 L140 480"/><path d="M260 -20 L280 480"/><path d="M420 -20 L390 480"/>
+    <path d="M-20 120 L1300 40"/><path d="M-20 260 L1300 200"/><path d="M-20 420 L1300 380"/><path d="M-20 560 L1300 540"/>
+    <path d="M140 -20 L200 640"/><path d="M420 -20 L450 640"/><path d="M700 -20 L690 640"/><path d="M980 -20 L1010 640"/><path d="M1200 -20 L1180 640"/>
   </g>
   <g stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none" opacity=".8">
-    <path d="M-20 175 L520 130"/><path d="M-20 300 L520 265"/><path d="M180 -20 L210 480"/><path d="M340 -20 L335 480"/>
+    <path d="M-20 190 L1300 120"/><path d="M-20 340 L1300 290"/><path d="M-20 490 L1300 460"/><path d="M280 -20 L320 640"/><path d="M560 -20 L570 640"/><path d="M840 -20 L850 640"/><path d="M1100 -20 L1090 640"/>
   </g>
-  <ellipse cx="385" cy="115" rx="78" ry="52" fill="#BDEFD3"/>
-  <ellipse cx="105" cy="395" rx="70" ry="44" fill="#BDEFD3"/>
-  <circle cx="368" cy="100" r="9" fill="#8EDDB3"/><circle cx="398" cy="128" r="12" fill="#8EDDB3"/><circle cx="90" cy="388" r="11" fill="#8EDDB3"/>
-  <path d="M-20 290 C 110 250, 200 330, 320 292 S 470 240, 530 270" stroke="#A6DDF7" stroke-width="28" fill="none" stroke-linecap="round"/>
-  <path d="M70 80 C 140 60, 170 140, 220 150 S 300 110, 350 170 S 335 280, 262 300 S 150 330, 200 400 S 350 425, 422 382"
-        stroke="#fff" stroke-width="12" fill="none" stroke-linecap="round" opacity=".9"/>
-  <path class="lp-route" d="M70 80 C 140 60, 170 140, 220 150 S 300 110, 350 170 S 335 280, 262 300 S 150 330, 200 400 S 350 425, 422 382"
-        stroke="#17A673" stroke-width="7" fill="none"/>
+  <ellipse cx="900" cy="250" rx="110" ry="64" fill="#BDEFD3"/><ellipse cx="300" cy="470" rx="120" ry="60" fill="#BDEFD3"/><ellipse cx="1180" cy="120" rx="80" ry="50" fill="#BDEFD3"/>
+  <circle cx="880" cy="236" r="12" fill="#8EDDB3"/><circle cx="920" cy="264" r="15" fill="#8EDDB3"/><circle cx="280" cy="462" r="13" fill="#8EDDB3"/>
+  <path d="M-20 400 C 200 360, 380 450, 600 410 S 900 330, 1300 380" stroke="#A6DDF7" stroke-width="34" fill="none" stroke-linecap="round"/>
+  <g transform="translate(730 80) scale(.74) translate(-560 -90)">
+  <path d="{ROUTE}" stroke="#fff" stroke-width="13" fill="none" stroke-linecap="round" opacity=".9"/>
+  <path class="lp-route" d="{ROUTE}" stroke="#17A673" stroke-width="7" fill="none"/>
   <g font-size="22" text-anchor="middle" dominant-baseline="central">
-    <g><circle cx="70" cy="80" r="23" fill="#DFF6EB" stroke="#17A673" stroke-width="3"/><text x="70" y="81">🚩</text></g>
-    <g><circle cx="220" cy="150" r="23" fill="#FFE8DB" stroke="#FF7A3D" stroke-width="3"/><text x="220" y="151">☕</text></g>
-    <g><circle cx="350" cy="170" r="23" fill="#FFE8DB" stroke="#FF7A3D" stroke-width="3"/><text x="350" y="171">🥐</text></g>
-    <g><circle cx="262" cy="300" r="23" fill="#fff" stroke="#34B06A" stroke-width="3"/><text x="262" y="301">🌳</text></g>
-    <g><circle cx="200" cy="400" r="23" fill="#FFE8DB" stroke="#FF7A3D" stroke-width="3"/><text x="200" y="401">🍦</text></g>
-    <g><circle cx="422" cy="382" r="23" fill="#DFF6EB" stroke="#17A673" stroke-width="3"/><text x="422" y="383">🏁</text></g>
+    <g><circle cx="560" cy="120" r="23" fill="#DFF6EB" stroke="#17A673" stroke-width="3"/><text x="560" y="121">🚩</text></g>
+    <g><circle cx="760" cy="170" r="23" fill="#FFE8DB" stroke="#FF7A3D" stroke-width="3"/><text x="760" y="171">☕</text></g>
+    <g><circle cx="920" cy="160" r="23" fill="#FFE8DB" stroke="#FF7A3D" stroke-width="3"/><text x="920" y="161">🥐</text></g>
+    <g><circle cx="900" cy="330" r="23" fill="#fff" stroke="#34B06A" stroke-width="3"/><text x="900" y="331">🌳</text></g>
+    <g><circle cx="840" cy="470" r="23" fill="#FFE8DB" stroke="#FF7A3D" stroke-width="3"/><text x="840" y="471">🍦</text></g>
+    <g><circle cx="1220" cy="300" r="23" fill="#DFF6EB" stroke="#17A673" stroke-width="3"/><text x="1220" y="301">🏁</text></g>
   </g>
-  <g font-family="DM Sans, sans-serif" font-size="11" font-weight="700" fill="#33433E">
-    <text x="232" y="128">25 min break</text><text x="362" y="205">lunch!</text><text x="215" y="440">treat stop</text>
+  <g font-family="DM Sans, sans-serif" font-size="12" font-weight="700" fill="#33433E">
+    <text x="736" y="210">coffee · 15% off</text><text x="944" y="146">lunch!</text><text x="810" y="512">treat stop</text><text x="1150" y="346">18 km done</text>
+  </g>
+  <g>
+    <circle r="15" fill="#17A673" stroke="#fff" stroke-width="3"/><text font-family="DM Sans, sans-serif" font-size="10" font-weight="700" fill="#fff" text-anchor="middle" dy="4">MO</text>
+    <circle r="15" cx="-22" cy="12" fill="#FF7A3D" stroke="#fff" stroke-width="3"/><text x="-22" y="12" font-family="DM Sans, sans-serif" font-size="10" font-weight="700" fill="#fff" text-anchor="middle" dy="4">TL</text>
+    <circle r="15" cx="-6" cy="-24" fill="#3BB3F5" stroke="#fff" stroke-width="3"/><text x="-6" y="-24" font-family="DM Sans, sans-serif" font-size="10" font-weight="700" fill="#fff" text-anchor="middle" dy="4">PR</text>
+    <animateMotion dur="24s" repeatCount="indefinite" path="{ROUTE}"/>
+  </g>
   </g>
 </svg>'''
 
@@ -77,9 +87,12 @@ HTML = f'''
         <button class="cc-btn" data-act="signup">Join free</button>
       </div>
     </nav>
+  </div>
 
-    <section class="lp-hero">
-      <div>
+  <section class="lp-hero">
+    <div class="lp-mapbg">{HERO_SVG}</div>
+    <div class="lp-wrap">
+      <div class="lp-card">
         <div class="lp-eyebrow"><span class="new">NEW</span> Walking clubs, minus the sprinting</div>
         <h1>Long walks.<br><span class="hl">New people.</span><br><span class="snack">Snack stops</span> guaranteed.</h1>
         <p class="lead">CityCrossers is the walking club for people who'd rather stroll 20 km than sprint 5.
@@ -95,15 +108,12 @@ HTML = f'''
           <span class="cc-pill sky">🐢 Nobody gets left behind</span>
         </div>
       </div>
-      <div class="lp-visual">
-        <div class="lp-mapcard">{HERO_SVG}</div>
-        <div class="lp-float a">☕ Coffee break in 1.2 km<span class="sub">Kettle &amp; Crumb · 15% off for crossers</span></div>
-        <div class="lp-float b"><div class="cc-row" style="gap:8px"><span class="cc-av-stack">{AVATARS}</span></div>
-          <span class="sub" style="margin-top:4px">Maya + 7 others are going</span></div>
-        <div class="lp-float c">🏁 Walk complete · +48 pts<span class="sub">You met 4 new people today</span></div>
-      </div>
-    </section>
-  </div>
+    </div>
+    <div class="lp-float a">☕ Coffee break in 1.2 km<span class="sub">Kettle &amp; Crumb · 15% off for crossers</span></div>
+    <div class="lp-float b"><div class="cc-row" style="gap:8px"><span class="cc-av-stack">{AVATARS}</span></div>
+      <span class="sub" style="margin-top:4px">Maya + 7 others are going</span></div>
+    <div class="lp-float c">🏁 Walk complete · +48 pts<span class="sub">You met 4 new people today</span></div>
+  </section>
 
   <div class="lp-marquee"><div class="track">{MARQUEE}</div></div>
 
