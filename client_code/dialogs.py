@@ -9,6 +9,17 @@ from anvil import TextBox, DatePicker, FileLoader
 from . import ui, state, legal
 from .ui import esc
 
+GOOGLE_G = '<svg viewBox="0 0 48 48" width="18" height="18" aria-hidden="true" style="flex:none"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>'
+
+
+def _google_step_done():
+  """After login_with_google() gave None: did the person finish the Google window (they just have no account yet)?"""
+  try:
+    import anvil.google.auth
+    return bool(anvil.google.auth.get_user_email())
+  except Exception:
+    return True  # can't tell: go on to sign-up, which asks Google again if needed
+
 
 # ================================================================== auth
 
@@ -37,13 +48,15 @@ class _AuthBox(object):
         {ui.field("Password", "pw")}
         <div class="f-legal">{legal.consent_field()}</div>
         <button type="button" class="cc-btn block lg t-go" data-act="go"></button>
+        <div style="text-align:center;opacity:.6;margin:10px 0;font-size:14px">or</div>
+        <button type="button" class="cc-btn block lg ghost" data-act="google">{GOOGLE_G}Continue with Google</button>
         <div class="switch">
           <span class="t-switch-text"></span> <button type="button" class="cc-link" data-act="switch"></button>
           <div class="f-forgot" style="margin-top:8px"><button type="button" class="cc-link" data-act="forgot">Forgot your password?</button></div>
         </div>
         <p class="tiny muted center" style="margin-top:14px">By joining you agree to walk kindly, follow our
           safety guidelines, and never leave anyone behind at a bakery.</p>
-      </div>''', actions={'go': lambda a: self.submit(), 'switch': lambda a: self.set_mode(
+      </div>''', actions={'go': lambda a: self.submit(), 'google': lambda a: self.google(), 'switch': lambda a: self.set_mode(
         'login' if self.mode == 'signup' else 'signup'), 'forgot': lambda a: self.forgot()})
     self.component.add_component(self.name, slot='name')
     self.component.add_component(self.email, slot='email')
@@ -100,6 +113,22 @@ class _AuthBox(object):
     except anvil.users.UserExists:
       self.set_mode('login')
       return self.error("You already have an account. Log in instead.")
+    except Exception as e:
+      return self.error(str(e).replace('anvil.users.', ''))
+    ui.close_modal(self.component, True)
+
+  def google(self):
+    """Continue with Google: sign in, or create the account on the first visit (sign-up asks for the tick here too)."""
+    if self.mode == 'signup' and not legal.consent_ok(ui.dom(self.component)):
+      return
+    try:
+      if anvil.users.login_with_google(remember=True) is None:
+        if not _google_step_done() or anvil.users.signup_with_google(remember=True) is None:
+          return self.error("Google sign-in was cancelled.")
+        name = (self.name.text or '').strip() if self.mode == 'signup' else ''
+        if len(name) >= 2:
+          anvil.server.call('update_me', {'display_name': name})
+        state.after_login = state.after_login or 'welcome'
     except Exception as e:
       return self.error(str(e).replace('anvil.users.', ''))
     ui.close_modal(self.component, True)
