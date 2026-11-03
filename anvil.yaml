@@ -612,7 +612,7 @@ native_deps:
   head_html: |-
     <!-- Prepsto feedback panel (the only feedback channel): every Submit feedback link (data-prepsto-open) opens it -->
     <script src="https://prepsto.com/_/theme/widget.js" data-prepsto="wzrzr2f" data-button="false" data-label="Submit feedback" async></script>
-    <script src="_/theme/legal-kit.js?v=e4f4da033b"></script>
+    <script src="_/theme/legal-kit.js?v=b41df91f33"></script>
     <!-- seo:start (APP_MAKER/seo: edit seo/apps/citycrossers.json and run seo.py, not here) -->
     <link rel="canonical" href="https://citycrossers.com/">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -639,7 +639,7 @@ native_deps:
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin></script>
-    <script src="_/theme/cc.js"></script>
+    <script src="_/theme/cc.js?v=20261103"></script>
     <link rel="icon" type="image/svg+xml" href="_/theme/logo.svg">
     <link rel="apple-touch-icon" href="_/theme/apple-touch-icon.png">
     <meta name="theme-color" content="#17A673">

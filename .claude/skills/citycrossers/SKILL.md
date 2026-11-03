@@ -58,6 +58,7 @@ theme/assets/          theme.css (design system), cc.js (swipe, confetti, clipbo
 
 - **Continue with Google** (client_code/dialogs.py `_AuthBox.google`): `login_with_google()` returns None for someone without an account, so the code then calls `signup_with_google()`; on the sign-up view it needs the Privacy & Terms tick first. Needs `use_google` + the Google service in anvil.yaml.
 - Leaflet 1.9.4 from unpkg + OpenStreetMap tiles (tile.openstreetmap.org; CARTO's free tiles started demanding a key in Oct 2026, so switched Nov 2 2026) + Open-Meteo: no API keys. OSM tile policy: keep the attribution, no prefetching/bulk downloads. Adding another provider = update the legal kit facts.
+- Landing "Watch" section (`#watch`, under the hero marquee): YouTube pitch video iIDuAWF-BzI. Cover is `theme/assets/yt-cover.jpg`; the click handler in cc.js swaps in a youtube-nocookie player (legal kit provider `youtube_play`). Bump `cc.js?v=` in anvil.yaml when cc.js changes.
 - `python -I` hides PyYAML: run gitapp_check/gitapp_test without `-I`.
 - Consider 18+ for this app (adults meeting strangers): an open suggestion in the legal kit README, not done.
 

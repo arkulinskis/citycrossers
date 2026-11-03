@@ -117,6 +117,21 @@ HTML = f'''
 
   <div class="lp-marquee"><div class="track">{MARQUEE}</div></div>
 
+  <section class="lp-section ytf" id="watch">
+    <div class="lp-wrap"><div class="ytf-in">
+      <div class="ytf-copy">
+        <div class="lp-kicker ytf-kick"><svg viewBox="0 0 28 20" width="20" height="14" aria-hidden="true"><rect width="28" height="20" rx="5" fill="#FF0033"/><path d="M11.2 5.8v8.4l7.3-4.2z" fill="#fff"/></svg>Watch</div>
+        <h2>See CityCrossers in about a minute.</h2>
+        <p class="intro">A short video tour: swipe on group walks, plan a route with food stops, and meet your crew.</p>
+        <a class="ytf-link" href="https://www.youtube.com/watch?v=iIDuAWF-BzI" target="_blank" rel="noopener">Watch on YouTube &#8599;</a>
+      </div>
+      <div>
+        <div class="ytf-frame"><button type="button" class="ytf-cover" data-yt-film="iIDuAWF-BzI" data-yt-title="CityCrossers video" aria-label="Play the CityCrossers video (1:14)"><img src="_/theme/yt-cover.jpg" alt="" loading="lazy" decoding="async" width="960" height="540"><span class="ytf-play" aria-hidden="true"><svg viewBox="0 0 68 48" width="68" height="48"><path d="M66.5 7.7a8.5 8.5 0 0 0-6-6C55.3.3 34 .3 34 .3s-21.3 0-26.5 1.4a8.5 8.5 0 0 0-6 6C.1 13 .1 24 .1 24s0 11 1.4 16.3a8.5 8.5 0 0 0 6 6c5.2 1.4 26.5 1.4 26.5 1.4s21.3 0 26.5-1.4a8.5 8.5 0 0 0 6-6C67.9 35 67.9 24 67.9 24s0-11-1.4-16.3z" fill="#FF0033"/><path d="M45 24 27 14v20z" fill="#fff"/></svg></span><span class="ytf-len">1:14</span></button></div>
+        <p class="ytf-note">The video loads from YouTube when you press play.</p>
+      </div>
+    </div></div>
+  </section>
+
   <section class="lp-section" id="how">
     <div class="lp-wrap">
       <div class="lp-kicker">How it works</div>

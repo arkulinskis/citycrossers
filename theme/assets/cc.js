@@ -84,3 +84,19 @@ window.cc = (function () {
 
   return { swipe: swipe, fly: fly, confetti: confetti, copy: copy, scrollTo: scrollTo };
 })();
+
+// Watch section: swap the video's cover for YouTube's player (privacy-enhanced) only when it's pressed.
+if (!window.__ytFilm) {
+  window.__ytFilm = true;
+  document.addEventListener('click', function (e) {
+    var b = e.target && e.target.closest ? e.target.closest('[data-yt-film]') : null;
+    if (!b) return;
+    var f = document.createElement('iframe');
+    f.src = 'https://www.youtube-nocookie.com/embed/' + b.getAttribute('data-yt-film') + '?autoplay=1&rel=0&playsinline=1';
+    f.title = b.getAttribute('data-yt-title') || 'Video';
+    f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    f.allowFullscreen = true;
+    f.referrerPolicy = 'strict-origin-when-cross-origin';
+    b.parentNode.replaceChild(f, b);
+  });
+}
