@@ -31,7 +31,7 @@ client_code/Main/      app shell (header nav, points chip, notifications bell, u
 client_code/<Page>/    Landing, Discover (swipe deck), MapPage, WalkEditor, WalkDetail, MyWalks, People, Profile, ProfileEdit, Journey, Perks, Admin, Safety, Notifications
 client_code/ui.py      constants, HTML builders, formatting (fmt_time/date/when, km, stars), route_stats, level_for, server-call wrapper, chips/stars widgets
 client_code/dialogs.py auth, safety_pledge, place_form, review, entry (journal), report, invite, place_details
-client_code/mapkit.py  Leaflet wrapper (CARTO Voyager tiles, routes)      state.py signed-in user, counts, go(route)
+client_code/mapkit.py  Leaflet wrapper (OpenStreetMap tiles, routes)      state.py signed-in user, counts, go(route)
 server_code/common.py  ADMIN_EMAILS, current_user/require_admin, ids (rid/by_id), points (award), levels, notify (+ optional email), haversine/route_stats, match_score
 server_code/serial.py  rows → client-safe dicts (no emails or emergency contacts leak)
 server_code/api_walks.py   walks, membership (join/pass/invite/host_decide/leave), stops + votes, chat, completion, home_feed, map_data
@@ -57,7 +57,7 @@ theme/assets/          theme.css (design system), cc.js (swipe, confetti, clipbo
 ## Gotchas
 
 - **Continue with Google** (client_code/dialogs.py `_AuthBox.google`): `login_with_google()` returns None for someone without an account, so the code then calls `signup_with_google()`; on the sign-up view it needs the Privacy & Terms tick first. Needs `use_google` + the Google service in anvil.yaml.
-- Leaflet 1.9.4 from unpkg + CARTO Voyager tiles + Open-Meteo: no API keys. Adding another provider = update the legal kit facts.
+- Leaflet 1.9.4 from unpkg + OpenStreetMap tiles (tile.openstreetmap.org; CARTO's free tiles started demanding a key in Oct 2026, so switched Nov 2 2026) + Open-Meteo: no API keys. OSM tile policy: keep the attribution, no prefetching/bulk downloads. Adding another provider = update the legal kit facts.
 - `python -I` hides PyYAML: run gitapp_check/gitapp_test without `-I`.
 - Consider 18+ for this app (adults meeting strangers): an open suggestion in the legal kit README, not done.
 

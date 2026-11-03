@@ -410,7 +410,7 @@ body .file-loader label, body .anvil-file-loader .btn {
 .cc-profile-hero .banner { height: 150px; position: relative; }
 .cc-profile-hero .banner .path { bottom: 0; height: 100%; left: 0; opacity: .5; position: absolute; width: 100%; }
 .cc-profile-hero .inner { padding: 0 26px 24px; }
-.cc-profile-hero .top { align-items: flex-end; display: flex; flex-wrap: wrap; gap: 18px; justify-content: space-between; margin-top: -56px; }
+.cc-profile-hero .top { position: relative; z-index: 1; align-items: flex-end; display: flex; flex-wrap: wrap; gap: 18px; justify-content: space-between; margin-top: -56px; }
 .cc-profile-hero h1 { font-size: 2rem; margin: 10px 0 2px; }
 .cc-profile-hero .headline { color: var(--ink-2); font-size: 1.08rem; }
 .cc-kpis { display: grid; gap: 10px; grid-template-columns: repeat(4, 1fr); margin-top: 18px; }
@@ -634,6 +634,8 @@ body .file-loader label, body .anvil-file-loader .btn {
 }
 @keyframes cc-fade-up { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 .cc-fade-in { animation: cc-fade-up .35s ease both; }
+/* The swipe card moves by inline transforms: don't let the finished fade hold transform:none. */
+.cc-swipe.cc-fade-in { animation-fill-mode: backwards; }
 
 /* ================================================================================
    Landing page

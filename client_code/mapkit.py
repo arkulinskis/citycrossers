@@ -1,12 +1,13 @@
-"""A thin Leaflet wrapper for Anvil (bright CARTO Voyager tiles, emoji pins)."""
+"""A thin Leaflet wrapper for Anvil (OpenStreetMap tiles, emoji pins)."""
 import anvil.js
 from anvil.js import window
 
 from . import ui
 
-TILES = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
-ATTRIBUTION = ('&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> '
-               '&copy; <a href="https://carto.com/attributions">CARTO</a>')
+# OpenStreetMap's own tiles (CARTO's free basemaps started asking for an API key in Oct 2026).
+# OSM tile policy: show the attribution, no bulk downloading, max zoom 19.
+TILES = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
+ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 DEFAULT_CENTER = [51.5185, -0.1050]   # central London, where the demo walks live
 DEFAULT_ZOOM = 13
 
@@ -41,7 +42,7 @@ class MapView(object):
       return
     self.map = L.map(self._el(), {'scrollWheelZoom': self.scroll_zoom, 'zoomControl': True})
     self.map.setView(self.center, self.zoom)
-    L.tileLayer(TILES, {'attribution': ATTRIBUTION, 'maxZoom': 19, 'subdomains': 'abcd'}).addTo(self.map)
+    L.tileLayer(TILES, {'attribution': ATTRIBUTION, 'maxZoom': 19}).addTo(self.map)
     if self.on_click:
       self.map.on('click', self._clicked)
     queued, self._queue = self._queue, []

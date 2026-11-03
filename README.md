@@ -31,7 +31,7 @@ walking, crossed with a little Tinder (swipe on group walks) and a little Linked
    Remove or reload it from **Admin → Demo data**. Demo walkers can't log in.
 
 Services used: Data Tables, Users (email + password, no email confirmation), Email (invites and notifications).
-External: Leaflet 1.9.4 + CARTO Voyager tiles (no API key), Open-Meteo forecasts (no API key), Google Fonts.
+External: Leaflet 1.9.4 + OpenStreetMap tiles (no API key; CARTO until Nov 2026), Open-Meteo forecasts (no API key), Google Fonts.
 
 ## Code map
 
