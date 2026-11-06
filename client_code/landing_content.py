@@ -328,6 +328,7 @@ HTML = f'''
       <div><b>CityCrossers</b> · walk like the ancestors, snack like the moderns.</div>
       <div><button data-act="safety">Safety</button><button data-act="scroll" data-arg="faq">FAQ</button>
         <button data-act="partner">Partners</button><a class="lp-idea" href="https://prepsto.com/#f/wzrzr2f" target="_blank" rel="noopener" data-prepsto-open>Submit feedback</a><button data-lk-open="overview">Privacy &amp; Terms</button><button data-act="login">Log in</button></div>
+      <div class="lp-org">Contact developer: <a href="https://arkvital.com" target="_blank" rel="noopener">arkvital.com</a> · Parent company: <a href="https://addanapp.com" target="_blank" rel="noopener">addanapp.com</a></div>
     </footer>
   </div>
 </div>
