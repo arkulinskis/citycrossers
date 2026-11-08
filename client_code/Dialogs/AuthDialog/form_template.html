@@ -1,0 +1,36 @@
+<div class="cc-dlg">
+  <div class="cc-auth">
+    <div class="head"><img src="_/theme/logo.svg" alt="" width="64" height="64" class="cc-auth-logo">
+      <anvil-component type="Label" name="title" prop:role='["cc-modal-title"]'></anvil-component>
+      <anvil-component type="Label" name="sub" prop:role='["cc-modal-sub"]'></anvil-component>
+    </div>
+    <anvil-component type="Label" name="message" prop:role='["msg-error"]' prop:visible="false"></anvil-component>
+    <label class="cc-field" anvil:name="name_field"><span class="cc-label">What should walkers call you?</span>
+      <anvil-component type="TextBox" name="name_box" prop:placeholder="First name or walking alias"></anvil-component>
+    </label>
+    <label class="cc-field"><span class="cc-label">Email</span>
+      <anvil-component type="TextBox" name="email_box" prop:type="email" prop:placeholder="you@example.com"></anvil-component>
+    </label>
+    <label class="cc-field" anvil:name="password_field"><span class="cc-label">Password</span>
+      <anvil-component type="TextBox" name="password_box" prop:hide_text="true" prop:placeholder="Password (8+ characters)"></anvil-component>
+    </label>
+    <div anvil:name="consent_box" anvil:dom-node="consent"></div>
+    <anvil-component type="Button" name="go_button" prop:text="Log in" prop:role='["cc-btn", "lg", "block"]'></anvil-component>
+    <div anvil:name="google_part">
+      <div class="au-or">or</div>
+      <anvil-component type="Button" name="google_button" prop:text="Continue with Google" prop:icon="_/theme/google-g.svg" prop:role='["cc-btn", "lg", "block", "ghost", "au-google"]'></anvil-component>
+    </div>
+    <div class="switch">
+      <anvil-component type="Label" name="switch_text" prop:role='["inline"]'></anvil-component>
+      <anvil-component type="Button" name="switch_button" prop:role='["cc-link"]'></anvil-component>
+      <div class="f-forgot" anvil:name="forgot_part">
+        <anvil-component type="Button" name="forgot_button" prop:text="Forgot your password?" prop:role='["cc-link"]'></anvil-component>
+      </div>
+      <div class="f-forgot" anvil:name="back_part">
+        <anvil-component type="Button" name="back_button" prop:text="Back to log in" prop:role='["cc-link"]'></anvil-component>
+      </div>
+      <div class="f-forgot"><anvil-component type="Button" name="close_button" prop:text="Not now" prop:role='["cc-link", "quiet"]'></anvil-component></div>
+    </div>
+    <p class="small muted center cc-auth-note">By joining you agree to walk kindly, follow our safety guidelines, and never leave anyone behind at a bakery.</p>
+  </div>
+</div>

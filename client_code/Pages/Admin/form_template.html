@@ -1,0 +1,105 @@
+<anvil-form layout="CityCrossers.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="cc-page">
+      <div class="cc-empty" anvil:name="denied_box"><span class="big" aria-hidden="true">🔒</span><h3>Admins only</h3><p class="muted">This area is for the CityCrossers team.</p></div>
+      <div anvil:name="admin_box">
+        <h1 class="cc-h1">🛠️ Admin</h1>
+        <p class="muted cc-lead cc-mb">Run the club: partner deals, places, safety and members.</p>
+        <div class="cc-stat-row cc-admin-stats">
+          <div class="cc-stat"><b anvil:dom-node="s_users"></b><span>members</span></div>
+          <div class="cc-stat"><b anvil:dom-node="s_walks"></b><span anvil:dom-node="s_walks_l"></span></div>
+          <div class="cc-stat"><b anvil:dom-node="s_places"></b><span>places</span></div>
+          <div class="cc-stat"><b anvil:dom-node="s_reviews"></b><span>reviews</span></div>
+          <div class="cc-stat"><b anvil:dom-node="s_deals"></b><span>active deals</span></div>
+          <div class="cc-stat" anvil:dom-node="s_reports_box"><b anvil:dom-node="s_reports"></b><span>open reports</span></div>
+        </div>
+        <div class="cc-tabs cc-mb-lg" role="group" aria-label="Admin sections">
+          <anvil-component type="RepeatingPanel" name="tabs_panel" prop:item_template="CityCrossers.Items.Chip" prop:role='["contents"]'></anvil-component>
+        </div>
+
+        <div class="cc-grid two cc-top" anvil:name="deals_tab">
+          <div class="cc-card"><div class="cc-card-title"><h2 class="cc-card-h">All deals</h2></div>
+            <div class="cc-table-wrap" anvil:name="deals_table">
+              <div class="cc-thead ad-deal"><span>Deal</span><span>Place</span><span>%</span><span>Code</span><span>Until</span><span>Status</span><span></span></div>
+              <anvil-component type="RepeatingPanel" name="deals_panel" prop:item_template="CityCrossers.Items.AdminDealRow"></anvil-component>
+            </div>
+            <div class="cc-empty" anvil:name="no_deals"><span class="big" aria-hidden="true">🏷️</span><h3>No deals yet</h3><p class="muted">Create the first one with the form.</p></div>
+          </div>
+          <div class="cc-card tint-orange">
+            <div class="cc-card-title"><h2 class="cc-card-h" anvil:dom-node="deal_h">🏷️ New deal</h2>
+              <anvil-component type="Button" name="new_deal_button" prop:text="+ New" prop:role='["cc-btn", "ghost", "sm"]'></anvil-component></div>
+            <p class="small cc-card-help">Deals show as a <b>%</b> badge on the map, in place details, on walk routes and on the Perks page.
+              People who reviewed the place and would go back get notified.</p>
+            <label class="cc-field"><span class="cc-label">Place</span><anvil-component type="DropDown" name="d_place" prop:include_placeholder="true" prop:placeholder="Choose a place…"></anvil-component></label>
+            <label class="cc-field"><span class="cc-label">Headline</span><anvil-component type="TextBox" name="d_title" prop:placeholder="e.g. 15% off pastries for CityCrossers"></anvil-component></label>
+            <label class="cc-field"><span class="cc-label">Details</span><anvil-component type="TextArea" name="d_desc" prop:placeholder="Details walkers should know (when it applies, how to claim)" prop:height="70"></anvil-component></label>
+            <div class="cc-form-row">
+              <label class="cc-field"><span class="cc-label">Percent off</span><anvil-component type="TextBox" name="d_pct" prop:type="number" prop:placeholder="e.g. 15"></anvil-component></label>
+              <label class="cc-field"><span class="cc-label">Code</span><anvil-component type="TextBox" name="d_code" prop:placeholder="e.g. CROSS15 (optional)"></anvil-component></label>
+            </div>
+            <div class="cc-field"><span class="cc-label">Valid until</span><anvil-component type="DatePicker" name="d_until" prop:format="%d %b %Y" prop:pick_time="false"></anvil-component></div>
+            <anvil-component type="CheckBox" name="d_active" prop:text="Active (visible on the map)" prop:checked="true"></anvil-component>
+            <div class="cc-mt"><anvil-component type="Button" name="save_deal_button" prop:text="Save deal" prop:role='["cc-btn", "orange", "block"]'></anvil-component></div>
+          </div>
+        </div>
+
+        <div class="cc-card" anvil:name="places_tab">
+          <div class="cc-card-title"><h2 class="cc-card-h" anvil:dom-node="places_h"></h2>
+            <anvil-component type="Button" name="add_place_button" prop:text="➕ Add a place" prop:role='["cc-btn", "sm"]'></anvil-component></div>
+          <div class="cc-table-wrap">
+            <div class="cc-thead ad-place"><span>Place</span><span>Kind</span><span>Rating</span><span>Deal</span><span></span></div>
+            <anvil-component type="RepeatingPanel" name="places_panel" prop:item_template="CityCrossers.Items.AdminPlaceRow"></anvil-component>
+          </div>
+        </div>
+
+        <div anvil:name="reports_tab">
+          <anvil-component type="RepeatingPanel" name="reports_panel" prop:item_template="CityCrossers.Items.ReportCard" prop:role='["cc-list"]'></anvil-component>
+          <div class="cc-empty" anvil:name="no_reports"><span class="big" aria-hidden="true">🕊️</span><h3>No reports</h3><p class="muted">All calm on the towpath.</p></div>
+        </div>
+
+        <div class="cc-card" anvil:name="users_tab">
+          <div class="cc-card-title"><h2 class="cc-card-h">👥 Members</h2></div>
+          <label class="cc-field"><span class="sr-only">Filter members</span><anvil-component type="TextBox" name="user_filter" prop:placeholder="Filter users by name or email…"></anvil-component></label>
+          <div class="cc-table-wrap" anvil:name="users_table">
+            <div class="cc-thead ad-user"><span>Member</span><span>Level</span><span>Walks</span><span>Joined</span><span></span></div>
+            <anvil-component type="RepeatingPanel" name="users_panel" prop:item_template="CityCrossers.Items.AdminUserRow"></anvil-component>
+          </div>
+          <p class="muted" anvil:name="no_users">No matches.</p>
+        </div>
+
+        <div class="cc-grid two cc-top" anvil:name="perks_tab">
+          <div class="cc-card"><h2 class="cc-card-h">🎁 Perks catalog</h2>
+            <div class="cc-table-wrap">
+              <div class="cc-thead ad-perk"><span>Perk</span><span>Cost</span><span>Status</span><span></span></div>
+              <anvil-component type="RepeatingPanel" name="perks_panel" prop:item_template="CityCrossers.Items.AdminPerkRow"></anvil-component>
+            </div></div>
+          <div class="cc-card tint-sun">
+            <div class="cc-card-title"><h2 class="cc-card-h" anvil:dom-node="perk_h">New perk</h2>
+              <anvil-component type="Button" name="new_perk_button" prop:text="+ New" prop:role='["cc-btn", "ghost", "sm"]'></anvil-component></div>
+            <div class="cc-form-row">
+              <label class="cc-field"><span class="cc-label">Emoji</span><anvil-component type="TextBox" name="p_emoji" prop:placeholder="🎁"></anvil-component></label>
+              <label class="cc-field"><span class="cc-label">Cost (points)</span><anvil-component type="TextBox" name="p_cost" prop:type="number" prop:placeholder="Cost in points"></anvil-component></label>
+            </div>
+            <label class="cc-field"><span class="cc-label">Name</span><anvil-component type="TextBox" name="p_name" prop:placeholder="Perk name"></anvil-component></label>
+            <label class="cc-field"><span class="cc-label">Description</span><anvil-component type="TextBox" name="p_desc" prop:placeholder="Short description"></anvil-component></label>
+            <anvil-component type="CheckBox" name="p_active" prop:text="Active" prop:checked="true"></anvil-component>
+            <p class="small muted">Perks can be switched off but not deleted, so past redemptions keep their history.</p>
+            <anvil-component type="Button" name="save_perk_button" prop:text="Save perk" prop:role='["cc-btn", "block"]'></anvil-component>
+          </div>
+        </div>
+
+        <div class="cc-card cc-demo-card" anvil:name="demo_tab">
+          <h2 class="cc-card-h">🧪 Demo data</h2>
+          <p>A fresh app comes with demo content so it doesn't feel empty: London landmarks plus fictional cafés, 8 demo walkers,
+            upcoming walks, reviews and partner deals. Demo walkers can't log in.</p>
+          <p><b>Currently loaded:</b> <span anvil:dom-node="demo_n"></span></p>
+          <div class="cc-row">
+            <anvil-component type="Button" name="seed_button" prop:text="Reload demo data" prop:role='["cc-btn"]'></anvil-component>
+            <anvil-component type="Button" name="clear_demo_button" prop:text="Remove all demo data" prop:role='["cc-btn", "danger"]'></anvil-component>
+          </div>
+          <p class="small muted cc-mt">Removing demo data also removes members' reviews of demo places and their spots on demo walks.</p>
+        </div>
+      </div>
+    </div>
+  </anvil-block>
+</anvil-form>

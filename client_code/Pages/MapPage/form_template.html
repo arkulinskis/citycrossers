@@ -1,0 +1,37 @@
+<anvil-form layout="CityCrossers.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="cc-page">
+      <div class="cc-row between cc-page-head">
+        <div><h1 class="cc-h1">The snack map 🗺️</h1>
+          <p class="muted cc-lead">Every good stop, pinned by walkers. Tap a pin for reviews, deals and walks.</p></div>
+        <div class="cc-row">
+          <anvil-component type="Button" name="locate_button" prop:text="📍 Near me" prop:role='["cc-btn", "ghost"]'></anvil-component>
+          <anvil-component type="Button" name="propose_button" prop:text="➕ Propose a place" prop:role='["cc-btn", "orange"]'></anvil-component>
+        </div>
+      </div>
+      <div class="cc-map-wrap">
+        <div class="cc-map-tools" role="group" aria-label="Show on the map">
+          <anvil-component type="RepeatingPanel" name="filters_panel" prop:item_template="CityCrossers.Items.Chip" prop:role='["contents"]'></anvil-component>
+        </div>
+        <anvil-component type="CityCrossers.Components.MapView" name="map_view"></anvil-component>
+      </div>
+      <div class="cc-map-legend">
+        <span>☕🥐🍦 food &amp; drink</span><span>🌳 parks</span><span>👀 viewpoints</span><span>🪑 rest</span><span>🚰 water</span>
+        <span>🏛️ culture</span><span><b class="cc-deal-pct">%</b> partner deal</span><span>🚩 walk starts</span>
+        <span class="cc-spacer"></span><span anvil:dom-node="counts"></span>
+      </div>
+      <div class="cc-grid two cc-mt-lg">
+        <div><div class="cc-section-title cc-st-top"><h2>🏷️ Partner deals</h2></div>
+          <anvil-component type="RepeatingPanel" name="deals_panel" prop:item_template="CityCrossers.Items.DealCard" prop:role='["cc-cards-sm"]'></anvil-component>
+          <div class="cc-empty" anvil:name="deals_empty"><span class="big" aria-hidden="true">🏷️</span><h3>No partner deals yet</h3><p class="muted">Admins can add deals for places from the Admin page.</p></div>
+        </div>
+        <div><div class="cc-section-title cc-st-top"><h2>🚩 Walks starting soon</h2></div>
+          <div class="cc-card cc-card-tight">
+            <anvil-component type="RepeatingPanel" name="walks_panel" prop:item_template="CityCrossers.Items.WalkRow" prop:role='["cc-rows"]'></anvil-component>
+            <p class="muted" anvil:name="walks_empty">No upcoming walks on the map yet.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </anvil-block>
+</anvil-form>

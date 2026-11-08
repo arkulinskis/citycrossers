@@ -1,0 +1,52 @@
+---
+layout_metadata:
+  title: App frame
+  description: Header (Discover, Map, Plan a walk, My walks, People, Journey; points, notifications, the walker menu), the page, the footer; the nav becomes a bottom tab bar on phones
+---
+<div class="cc-root">
+  <div class="cc-shell landing-mode" anvil:name="shell">
+    <header class="cc-header">
+      <div class="cc-header-inner">
+        <a class="cc-logo" href="#discover" aria-label="CityCrossers home"><img class="cc-logo-img" src="_/theme/logo.svg" alt="" width="40" height="40"><span class="word">City<b>Crossers</b></span></a>
+        <nav class="cc-nav" aria-label="Main">
+          <a href="#discover" anvil:name="nav_discover"><span class="ico" aria-hidden="true">🧭</span><span>Discover</span></a>
+          <a href="#map" anvil:name="nav_map"><span class="ico" aria-hidden="true">🗺️</span><span>Map</span></a>
+          <a href="#plan" class="plan" anvil:name="nav_plan"><span class="ico" aria-hidden="true">➕</span><span>Plan<span class="lbl-long"> a walk</span></span></a>
+          <a href="#walks" anvil:name="nav_walks"><span class="ico" aria-hidden="true">🥾</span><span><span class="lbl-long">My </span>Walks</span></a>
+          <a href="#people" anvil:name="nav_people"><span class="ico" aria-hidden="true">👋</span><span>People</span></a>
+          <a href="#journey" class="secondary" anvil:name="nav_journey"><span class="ico" aria-hidden="true">📔</span><span>Journey</span></a>
+        </nav>
+        <div class="cc-header-right">
+          <a class="cc-points-chip" href="#perks" title="Your points"><span aria-hidden="true">⭐</span><span anvil:dom-node="points">0</span><span class="sr-only"> points</span></a>
+          <a class="cc-icon-btn" href="#notifications" title="Notifications" aria-label="Notifications"><span aria-hidden="true">🔔</span><span class="cc-badge-dot" anvil:dom-node="badge">0</span></a>
+          <div class="cc-me" anvil:name="me_box">
+            <button type="button" class="cc-me-btn" aria-label="Your menu" anvil:on-dom:click="self.me_click"><span class="cc-av" anvil:dom-node="me_av"></span></button>
+            <div class="cc-menu">
+              <div class="head"><b anvil:dom-node="menu_name">You</b><span class="small muted" anvil:dom-node="menu_level"></span></div>
+              <hr>
+              <a href="#me">🪪 My profile</a>
+              <a href="#me/edit">✏️ Edit profile</a>
+              <a href="#journey">📔 My journey</a>
+              <a href="#perks">🎁 Points &amp; perks</a>
+              <a href="#safety">🛟 Safety center</a>
+              <button type="button" data-lk-open="overview">🔒 Privacy &amp; Terms</button>
+              <a href="#admin" anvil:name="menu_admin">🛠️ Admin</a>
+              <hr>
+              <a href="#landing">🏠 About CityCrossers</a>
+              <button type="button" anvil:on-dom:click="self.logout_click">👋 Log out</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main class="cc-main">
+      <anvil-slot name="content"></anvil-slot>
+    </main>
+    <footer class="cc-footer">
+      <div>🥾 CityCrossers · long walks, new people, snack stops guaranteed</div>
+      <div class="cc-footer-row"><a href="#safety">Safety center</a> · <a href="#landing">About</a> · <a href="#perks">Perks</a> · <a href="https://prepsto.com/#f/wzrzr2f" target="_blank" rel="noopener" data-prepsto-open>Submit feedback</a> · <button type="button" class="cc-footer-link" data-lk-open="overview">Privacy &amp; Terms</button></div>
+      <div class="cc-footer-row">Contact developer: <a href="https://arkvital.com" target="_blank" rel="noopener">arkvital.com</a> · Parent company: <a href="https://addanapp.com" target="_blank" rel="noopener">addanapp.com</a></div>
+    </footer>
+    <anvil-component type="Timer" name="poll_timer" prop:interval="0"></anvil-component>
+  </div>
+</div>

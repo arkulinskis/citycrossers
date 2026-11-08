@@ -1,0 +1,19 @@
+<div class="walkcard-cell">
+  <a class="cc-walk-card cc-clickable" anvil:dom-node="link">
+    <div class="cover" anvil:dom-node="cover">
+      <span class="status"><span class="cc-pill" anvil:dom-node="status"></span></span>
+      <span class="emo" anvil:dom-node="emo" aria-hidden="true"></span>
+      <span class="when"><span anvil:dom-node="rel"></span><br><span class="when-at" anvil:dom-node="when"></span></span>
+    </div>
+    <div class="body">
+      <h3 class="cc-wc-title" anvil:dom-node="title"></h3>
+      <div class="facts"><span anvil:dom-node="dist"></span><span anvil:dom-node="dur"></span><span anvil:dom-node="pace"></span><span anvil:dom-node="vis"></span></div>
+      <anvil-component type="CityCrossers.Components.Strip" name="strip"></anvil-component>
+      <div class="foot">
+        <div class="cc-row cc-wc-host"><anvil-component type="CityCrossers.Components.Avatar" name="host_av"></anvil-component><span class="small muted" anvil:dom-node="host"></span></div>
+        <span class="small cc-wc-going" anvil:dom-node="going"></span>
+      </div>
+      <div class="cc-alert cc-wc-note" anvil:dom-node="note"><span aria-hidden="true" anvil:dom-node="note_ico"></span><span class="small" anvil:dom-node="note_text"></span></div>
+    </div>
+  </a>
+</div>

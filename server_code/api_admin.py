@@ -58,7 +58,7 @@ def admin_save_deal(data):
     pct = None
   if pct is not None and not (1 <= pct <= 100):
     raise Exception("Percent should be between 1 and 100.")
-  fields = dict(place=place, title=title[:80], description=(data.get('description') or '').strip()[:500],
+  fields: dict = dict(place=place, title=title[:80], description=(data.get('description') or '').strip()[:500],
                 percent=pct, code=(data.get('code') or '').strip().upper()[:24], valid_until=data.get('valid_until'),
                 active=bool(data.get('active', True)))
   d = by_id(app_tables.discounts, data.get('id')) if data.get('id') else None
@@ -148,7 +148,7 @@ def admin_save_perk(data):
   name = (data.get('name') or '').strip()
   if len(name) < 3:
     raise Exception("Name the perk.")
-  fields = dict(name=name[:60], emoji=(data.get('emoji') or '🎁')[:4], description=(data.get('description') or '')[:300],
+  fields: dict = dict(name=name[:60], emoji=(data.get('emoji') or '🎁')[:4], description=(data.get('description') or '')[:300],
                 cost=max(0, int(data.get('cost') or 0)), active=bool(data.get('active', True)))
   p = by_id(app_tables.perks, data.get('id')) if data.get('id') else None
   if p is None:

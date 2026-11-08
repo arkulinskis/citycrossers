@@ -1,0 +1,86 @@
+<anvil-form layout="CityCrossers.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="cc-page">
+      <div class="cc-empty" anvil:name="missing_box"><span class="big" aria-hidden="true">🫥</span><h3>Walker not found</h3><p class="muted">They may have left, or the link is wrong.</p></div>
+      <div anvil:name="profile_box">
+        <div class="cc-profile-hero cc-fade-in">
+          <div class="banner" anvil:dom-node="banner">
+            <svg class="path" viewBox="0 0 800 150" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M-10 120 C 120 40, 220 150, 360 80 S 600 20, 810 70" stroke="#fff" stroke-width="5" fill="none" stroke-dasharray="1 14" stroke-linecap="round"/></svg>
+          </div>
+          <div class="inner">
+            <div class="top">
+              <anvil-component type="CityCrossers.Components.Avatar" name="av"></anvil-component>
+              <div class="cc-row">
+                <a class="cc-btn" href="#me/edit" anvil:name="edit_link">✏️ Edit profile</a>
+                <anvil-component type="Button" name="copy_button" prop:text="🔗 Copy profile link" prop:role='["cc-btn", "ghost"]'></anvil-component>
+                <span class="cc-pill green cc-pill-big" anvil:name="connected_pill">✓ Connected</span>
+                <span class="cc-pill sun cc-pill-big" anvil:name="requested_pill">⏳ Request sent</span>
+                <anvil-component type="Button" name="accept_button" prop:text="✓ Accept connection" prop:role='["cc-btn"]'></anvil-component>
+                <anvil-component type="Button" name="connect_button" prop:text="👋 Connect" prop:role='["cc-btn"]'></anvil-component>
+                <anvil-component type="Button" name="invite_button" prop:text="💌 Invite to a walk" prop:role='["cc-btn", "orange"]'></anvil-component>
+                <anvil-component type="Button" name="report_button" prop:text="🚩" prop:tooltip="Report" prop:role='["cc-btn", "ghost", "icon"]'></anvil-component>
+              </div>
+            </div>
+            <h1><span anvil:dom-node="name"></span><span class="cc-verified" title="Verified walker" anvil:dom-node="ver"> ✔</span></h1>
+            <div class="headline" anvil:dom-node="headline"></div>
+            <div class="small muted cc-mt-xs" anvil:dom-node="meta"></div>
+            <div class="cc-pills cc-mt-sm">
+              <anvil-component type="RepeatingPanel" name="pills_panel" prop:item_template="CityCrossers.Items.Pill" prop:role='["contents"]'></anvil-component>
+            </div>
+            <div class="cc-kpis">
+              <div class="cc-kpi"><b anvil:dom-node="k_walks"></b><span>walks</span></div>
+              <div class="cc-kpi"><b anvil:dom-node="k_km"></b><span>walked</span></div>
+              <div class="cc-kpi"><b anvil:dom-node="k_met"></b><span>people met</span></div>
+              <div class="cc-kpi"><b anvil:dom-node="k_pts"></b><span>lifetime points</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="cc-grid two cc-detail-grid">
+          <div class="cc-stack">
+            <div class="cc-card"><h2 class="cc-card-h">👋 About</h2>
+              <p class="cc-prewrap" anvil:dom-node="bio"></p>
+              <div class="cc-form-row cc-mt-sm">
+                <div><div class="cc-label">🥐 Snack philosophy</div><div anvil:dom-node="snack"></div></div>
+                <div><div class="cc-label">🗣️ Languages</div><div anvil:dom-node="langs"></div></div>
+              </div>
+              <div class="cc-label cc-mt">💚 Into</div>
+              <div class="cc-pills">
+                <anvil-component type="RepeatingPanel" name="interests_panel" prop:item_template="CityCrossers.Items.Pill" prop:role='["contents"]'></anvil-component>
+              </div>
+              <span class="muted small" anvil:name="no_interests">No interests listed yet.</span>
+            </div>
+            <div class="cc-card"><div class="cc-card-title"><h2 class="cc-card-h">🏅 Endorsements</h2></div>
+              <anvil-component type="RepeatingPanel" name="endorse_panel" prop:item_template="CityCrossers.Items.EndorseRow" prop:role='["cc-gap-list"]'></anvil-component>
+              <p class="muted small" anvil:name="no_endorse">No endorsements yet. They come from people who walk together.</p>
+              <p class="small muted cc-mt-sm" anvil:name="endorse_hint">Connect or walk together to endorse.</p>
+            </div>
+            <div class="cc-card"><div class="cc-card-title"><h2 class="cc-card-h">🍽️ Taste map</h2><span class="small muted" anvil:dom-node="taste_sub"></span></div>
+              <anvil-component type="RepeatingPanel" name="reviews_panel" prop:item_template="CityCrossers.Items.ReviewCard" prop:role='["cc-divided"]'></anvil-component>
+              <p class="muted small" anvil:name="no_reviews">No public reviews yet.</p>
+            </div>
+            <div class="cc-card"><div class="cc-card-title"><h2 class="cc-card-h">📔 Journey highlights</h2><a class="small" href="#journey" anvil:name="journey_link">Open my journey</a></div>
+              <anvil-component type="RepeatingPanel" name="journal_panel" prop:item_template="CityCrossers.Items.JournalCard" prop:role='["cc-divided"]'></anvil-component>
+              <p class="muted small" anvil:name="no_journal">Nothing shared from their journey yet.</p>
+            </div>
+          </div>
+          <div class="cc-stack">
+            <div class="cc-card"><div class="cc-card-title"><h2 class="cc-card-h">🎖️ Badges</h2><span class="small muted" anvil:dom-node="badge_count"></span></div>
+              <anvil-component type="RepeatingPanel" name="badges_panel" prop:item_template="CityCrossers.Items.BadgeTile" prop:role='["cc-badges"]'></anvil-component>
+            </div>
+            <div class="cc-card" anvil:name="hosting_card"><h2 class="cc-card-h">🗓️ Hosting soon</h2>
+              <anvil-component type="RepeatingPanel" name="hosting_panel" prop:item_template="CityCrossers.Items.WalkRow" prop:role='["cc-rows"]'></anvil-component>
+            </div>
+            <div class="cc-card" anvil:name="mutual_card"><h2 class="cc-card-h">🤝 Mutual connections</h2>
+              <div class="cc-row cc-mutual">
+                <anvil-component type="RepeatingPanel" name="mutual_panel" prop:item_template="CityCrossers.Items.AvatarLink" prop:role='["contents"]'></anvil-component>
+              </div>
+            </div>
+            <div class="cc-card tint-sky small"><b>🛟 Meeting someone new?</b> Walk in groups, meet in public, and check
+              endorsements from people who've walked with them. <a href="#safety">Safety tips</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </anvil-block>
+</anvil-form>

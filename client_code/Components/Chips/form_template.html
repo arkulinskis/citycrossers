@@ -1,0 +1,12 @@
+---
+custom_component: true
+properties: []
+toolbox_item:
+  title: Chip picker
+  group: CityCrossers
+help_text: |
+  A row of chips to pick one or several. setup(options, selected, multi, color, limit, on_change); read .value.
+---
+<div class="cc-chips" role="group">
+  <anvil-component type="RepeatingPanel" name="panel" prop:item_template="CityCrossers.Items.Chip" prop:role='["contents"]'></anvil-component>
+</div>

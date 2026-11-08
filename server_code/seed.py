@@ -135,7 +135,7 @@ def seed_demo(force=False):
   for a, b, s in endorse:
     app_tables.endorsements.add_row(from_user=users[a], to_user=users[b], skill=s, created=t)
 
-  walks = [
+  walks: list = [
     dict(title="Canal Crawl: Little Venice → Limehouse", vibe='river', host="Maya Okafor", start=_at(4, 8, 30),
          pace='steady', max_walkers=10, tags=["Rivers & canals", "Bakeries", "Beginner friendly"],
          description="The whole Regent's Canal in one glorious day. Flat, scenic, and carefully engineered around "

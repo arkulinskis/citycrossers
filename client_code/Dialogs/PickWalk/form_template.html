@@ -1,0 +1,8 @@
+<div class="cc-dlg">
+  <anvil-component type="Label" name="title" prop:role='["cc-modal-title"]'></anvil-component>
+  <p class="cc-modal-sub">Pick one of your upcoming walks.</p>
+  <anvil-component type="RepeatingPanel" name="walks_panel" prop:item_template="CityCrossers.Items.Option" prop:role='["cc-list"]'></anvil-component>
+  <div class="cc-row end dlg-acts">
+    <anvil-component type="Button" name="no_button" prop:text="Cancel" prop:role='["cc-btn", "ghost"]'></anvil-component>
+  </div>
+</div>

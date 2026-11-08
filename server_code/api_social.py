@@ -191,7 +191,7 @@ def get_profile(user_id):
   if rel != 'self':
     walked_together = 1 if other.get_id() in co_walker_ids(u) else 0
   card = user_card(other)
-  endorsements = {}
+  endorsements: dict = {}
   for e in app_tables.endorsements.search(to_user=other):
     d = endorsements.setdefault(e['skill'], {'skill': e['skill'], 'count': 0, 'mine': False})
     d['count'] += 1

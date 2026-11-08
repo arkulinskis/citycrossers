@@ -1,0 +1,16 @@
+---
+custom_component: true
+properties: []
+toolbox_item:
+  title: Star rating
+  group: CityCrossers
+help_text: |
+  Five stars to tap. Read or set .value (0-5).
+---
+<div class="cc-stars" role="group" aria-label="Rating">
+  <button type="button" anvil:dom-node="s1" anvil:on-dom:click="self.star_click" data-n="1" aria-label="1 star">⭐</button>
+  <button type="button" anvil:dom-node="s2" anvil:on-dom:click="self.star_click" data-n="2" aria-label="2 stars">⭐</button>
+  <button type="button" anvil:dom-node="s3" anvil:on-dom:click="self.star_click" data-n="3" aria-label="3 stars">⭐</button>
+  <button type="button" anvil:dom-node="s4" anvil:on-dom:click="self.star_click" data-n="4" aria-label="4 stars">⭐</button>
+  <button type="button" anvil:dom-node="s5" anvil:on-dom:click="self.star_click" data-n="5" aria-label="5 stars">⭐</button>
+</div>

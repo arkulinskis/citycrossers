@@ -1,0 +1,67 @@
+<anvil-form layout="CityCrossers.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="cc-page narrow">
+      <div class="cc-hello cc-mb-lg" anvil:name="welcome_box"><h2 class="cc-welcome-h" anvil:dom-node="welcome_h"></h2>
+        <p class="cc-hello-sub">Let's set up your walker profile. It's how hosts decide to say yes, and how we match you with
+          walks at your pace. Complete it for <b>+25 pts</b>.</p></div>
+      <div class="cc-row between cc-mb"><h1 class="cc-h1 cc-m0" anvil:dom-node="h1"></h1>
+        <a href="#me" class="small">View public profile →</a></div>
+      <div class="cc-card tint-sun cc-mb-lg">
+        <div class="cc-row between"><b anvil:dom-node="strength"></b><span class="small muted" anvil:dom-node="missing"></span></div>
+        <div class="cc-progress sun cc-mt-sm" role="progressbar" aria-label="Profile strength" anvil:dom-node="bar_box"><div anvil:dom-node="bar"></div></div>
+      </div>
+      <div class="cc-stack">
+        <div class="cc-card">
+          <h2 class="cc-card-h">🪪 The basics</h2>
+          <div class="cc-row cc-photo-edit">
+            <anvil-component type="CityCrossers.Components.Avatar" name="av"></anvil-component>
+            <div>
+              <anvil-component type="FileLoader" name="photo_loader" prop:text="📷 Upload a photo" prop:file_types="image/*"></anvil-component>
+              <div class="cc-mt-xs"><anvil-component type="Button" name="remove_photo_button" prop:text="Remove" prop:role='["cc-btn", "ghost", "sm"]'></anvil-component></div>
+              <div class="small muted cc-mt-xs">A clear, friendly face photo helps people recognise you at the meeting point.</div>
+            </div>
+          </div>
+          <div class="cc-form-row">
+            <label class="cc-field"><span class="cc-label">Name</span><anvil-component type="TextBox" name="name_box" prop:placeholder="Your name"></anvil-component></label>
+            <label class="cc-field"><span class="cc-label">City</span><anvil-component type="TextBox" name="city_box" prop:placeholder="e.g. London"></anvil-component></label>
+          </div>
+          <label class="cc-field"><span class="cc-label">Headline</span>
+            <anvil-component type="TextBox" name="headline_box" prop:placeholder="e.g. Weekend 25k wanderer · canal enthusiast · will stop for any bun"></anvil-component>
+            <span class="hint">Your one-liner. Think LinkedIn, but for walking.</span></label>
+          <label class="cc-field"><span class="cc-label">About you</span>
+            <anvil-component type="TextArea" name="bio_box" prop:placeholder="A few lines about you: why you walk, what you love finding on the way, what you're like at km 18." prop:height="120"></anvil-component></label>
+          <label class="cc-field"><span class="cc-label">Languages</span>
+            <anvil-component type="TextBox" name="langs_box" prop:placeholder="e.g. English, Spanish, a bit of Swedish"></anvil-component></label>
+        </div>
+        <div class="cc-card">
+          <h2 class="cc-card-h">🥾 How you walk</h2>
+          <div class="cc-field"><span class="cc-label">Usual pace</span>
+            <div class="cc-options cc-options-3" role="group" aria-label="Usual pace">
+              <anvil-component type="RepeatingPanel" name="pace_panel" prop:item_template="CityCrossers.Items.Option" prop:role='["contents"]'></anvil-component>
+            </div></div>
+          <label class="cc-field"><span class="cc-label">Favourite walk length</span>
+            <anvil-component type="DropDown" name="distance_dd"></anvil-component></label>
+          <div class="cc-field"><span class="cc-label">Snack philosophy</span>
+            <anvil-component type="CityCrossers.Components.Chips" name="snack_chips"></anvil-component></div>
+          <div class="cc-field"><span class="cc-label">Into (pick up to 8)</span>
+            <anvil-component type="CityCrossers.Components.Chips" name="interest_chips"></anvil-component></div>
+        </div>
+        <div class="cc-card">
+          <h2 class="cc-card-h">🛟 Safety &amp; privacy</h2>
+          <label class="cc-field"><span class="cc-label">Emergency contact (private, never shown to other walkers)</span>
+            <anvil-component type="TextBox" name="emergency_box" prop:placeholder="Name and phone number of someone we can tell you about"></anvil-component>
+            <span class="hint">Only you can see this. Handy to have on file for long days out.</span></label>
+          <anvil-component type="CheckBox" name="discoverable_box" prop:text="🔎 Show me in “Walkers to meet” suggestions and search"></anvil-component>
+          <anvil-component type="CheckBox" name="public_box" prop:text="🌍 Make new journal entries &amp; reviews public by default"></anvil-component>
+          <anvil-component type="CheckBox" name="emails_box" prop:text="📧 Email me about invites, requests and walk changes"></anvil-component>
+          <div class="cc-alert" anvil:name="pledged_alert"><span class="ico" aria-hidden="true">✅</span><span>Safety pledge taken. Thank you!</span></div>
+          <div class="cc-alert orange" anvil:name="pledge_alert"><span class="ico" aria-hidden="true">🛟</span><span class="cc-grow">You haven't taken the safety pledge yet.</span>
+            <anvil-component type="Button" name="pledge_button" prop:text="Take it (+10)" prop:role='["cc-btn", "orange", "sm"]'></anvil-component></div>
+        </div>
+      </div>
+      <div class="cc-row end cc-save-sticky">
+        <anvil-component type="Button" name="save_button" prop:text="Save profile" prop:role='["cc-btn", "lg", "lifted"]'></anvil-component>
+      </div>
+    </div>
+  </anvil-block>
+</anvil-form>

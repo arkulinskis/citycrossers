@@ -1,0 +1,23 @@
+<div class="cc-dlg">
+  <div class="cc-row cc-place-head">
+    <span class="cc-place-e" anvil:dom-node="emoji" aria-hidden="true"></span>
+    <div>
+      <anvil-component type="Label" name="title" prop:role='["cc-modal-title"]'></anvil-component>
+      <div class="cc-row cc-place-meta"><span class="cc-pill" anvil:dom-node="kind"></span><span class="cc-rating" anvil:dom-node="rating"></span><span class="small muted" anvil:dom-node="count"></span></div>
+    </div>
+  </div>
+  <p anvil:dom-node="desc"></p>
+  <div class="small muted" anvil:dom-node="added"></div>
+  <div anvil:name="deals_part">
+    <h3 class="cc-dlg-h">🏷️ CityCrossers deals</h3>
+    <anvil-component type="RepeatingPanel" name="deals_panel" prop:item_template="CityCrossers.Items.DealCard" prop:role='["cc-list"]'></anvil-component>
+  </div>
+  <h3 class="cc-dlg-h">What walkers say</h3>
+  <anvil-component type="RepeatingPanel" name="reviews_panel" prop:item_template="CityCrossers.Items.ReviewCard" prop:role='["cc-list"]'></anvil-component>
+  <p class="muted small" anvil:name="no_reviews">No public reviews yet. Be the first!</p>
+  <div class="cc-row end dlg-acts">
+    <anvil-component type="Button" name="close_button" prop:text="Close" prop:role='["cc-btn", "ghost"]'></anvil-component>
+    <anvil-component type="Button" name="review_button" prop:text="⭐ Review" prop:role='["cc-btn", "ghost"]'></anvil-component>
+    <anvil-component type="Button" name="plan_button" prop:text="🗺️ Plan a walk from here" prop:role='["cc-btn", "orange"]'></anvil-component>
+  </div>
+</div>

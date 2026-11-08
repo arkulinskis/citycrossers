@@ -1,0 +1,45 @@
+<anvil-form layout="CityCrossers.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="cc-page">
+      <div class="cc-points-hero cc-fade-in">
+        <span class="sparkle" aria-hidden="true">⭐</span>
+        <h1><span anvil:dom-node="points"></span><span class="cc-points-l"> points to spend</span></h1>
+        <div class="cc-points-sub" anvil:dom-node="level"></div>
+        <div class="cc-progress sun" role="progressbar" aria-label="Progress to the next level" anvil:dom-node="bar_box"><div anvil:dom-node="bar"></div></div>
+        <div class="cc-levels cc-mt">
+          <anvil-component type="RepeatingPanel" name="levels_panel" prop:item_template="CityCrossers.Items.LevelTile" prop:role='["contents"]'></anvil-component>
+        </div>
+      </div>
+      <div class="cc-grid two cc-detail-grid">
+        <div>
+          <div class="cc-section-title cc-st-top"><h2>🎁 Perks</h2><span class="small muted">Spending points never lowers your level</span></div>
+          <anvil-component type="RepeatingPanel" name="perks_panel" prop:item_template="CityCrossers.Items.PerkCard" prop:role='["cc-cards-sm"]'></anvil-component>
+          <div class="cc-section-title"><h2>🏷️ Partner deals</h2><span class="small muted">Show the code at the counter</span></div>
+          <anvil-component type="RepeatingPanel" name="deals_panel" prop:item_template="CityCrossers.Items.DealCard" prop:role='["cc-cards-sm"]'></anvil-component>
+          <div class="cc-empty" anvil:name="no_deals"><span class="big" aria-hidden="true">🏷️</span><h3>No deals right now</h3><p class="muted">Check back soon.</p></div>
+        </div>
+        <div class="cc-stack">
+          <div class="cc-card"><h2 class="cc-card-h">💡 How to earn</h2>
+            <ul class="cc-safety-list small cc-earn">
+              <li><span class="i" aria-hidden="true">🥾</span><span>Finish a walk</span><b>15 pts + 2 per km</b></li>
+              <li><span class="i" aria-hidden="true">🎪</span><span>Host a walk to the finish</span><b>+25 pts</b></li>
+              <li><span class="i" aria-hidden="true">👋</span><span>Each new person you walk with</span><b>+5 pts (up to 50)</b></li>
+              <li><span class="i" aria-hidden="true">🗺️</span><span>Plan a walk</span><b>+10 pts</b></li>
+              <li><span class="i" aria-hidden="true">⭐</span><span>Review a place</span><b>+8 pts, +4 if public</b></li>
+              <li><span class="i" aria-hidden="true">📍</span><span>Put a place on the map</span><b>+3 pts</b></li>
+              <li><span class="i" aria-hidden="true">🗳️</span><span>Your suggested stop makes the route</span><b>+5 pts</b></li>
+              <li><span class="i" aria-hidden="true">🏅</span><span>Get endorsed</span><b>+3 pts</b></li>
+              <li><span class="i" aria-hidden="true">📔</span><span>Write in your journey</span><b>+5 pts a day</b></li>
+              <li><span class="i" aria-hidden="true">🪪</span><span>Complete your profile</span><b>+25 pts once</b></li>
+              <li><span class="i" aria-hidden="true">🛟</span><span>Take the safety pledge</span><b>+10 pts once</b></li>
+            </ul></div>
+          <div class="cc-card tint-sun" anvil:name="codes_card"><h2 class="cc-card-h">🎟️ Your perk codes</h2>
+            <anvil-component type="RepeatingPanel" name="codes_panel" prop:item_template="CityCrossers.Items.LedgerRow" prop:role='["cc-ledger"]'></anvil-component></div>
+          <div class="cc-card"><h2 class="cc-card-h">📜 History</h2>
+            <anvil-component type="RepeatingPanel" name="ledger_panel" prop:item_template="CityCrossers.Items.LedgerRow" prop:role='["cc-ledger", "small"]'></anvil-component>
+            <p class="muted small" anvil:name="no_ledger">No points yet. Go for a walk!</p></div>
+        </div>
+      </div>
+    </div>
+  </anvil-block>
+</anvil-form>

@@ -1,0 +1,36 @@
+<anvil-form layout="CityCrossers.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="cc-page narrow">
+      <div class="cc-hello cc-mb-lg">
+        <h1>My journey 📔</h1>
+        <p class="cc-hello-sub">Your life, one walk at a time. Private by default. Share what you want people to know you love.</p>
+        <div class="cc-stat-row">
+          <div class="cc-stat"><b anvil:dom-node="s_km"></b><span>walked</span></div>
+          <div class="cc-stat"><b anvil:dom-node="s_walks"></b><span>walks</span></div>
+          <div class="cc-stat"><b anvil:dom-node="s_people"></b><span>people met</span></div>
+          <div class="cc-stat"><b anvil:dom-node="s_reviews"></b><span>places reviewed</span></div>
+          <div class="cc-stat"><b anvil:dom-node="s_entries"></b><span>entries</span></div>
+        </div>
+      </div>
+      <div class="cc-row between cc-mb">
+        <div class="cc-chips" role="group" aria-label="Show">
+          <anvil-component type="RepeatingPanel" name="filters_panel" prop:item_template="CityCrossers.Items.Chip" prop:role='["contents"]'></anvil-component>
+        </div>
+        <div class="cc-row">
+          <anvil-component type="Button" name="entry_button" prop:text="📔 New entry" prop:role='["cc-btn"]'></anvil-component>
+          <anvil-component type="Button" name="review_button" prop:text="⭐ Review a place" prop:role='["cc-btn", "orange"]'></anvil-component>
+        </div>
+      </div>
+      <div class="cc-journey" anvil:name="timeline">
+        <anvil-component type="RepeatingPanel" name="items_panel" prop:item_template="CityCrossers.Items.JourneyItem"></anvil-component>
+      </div>
+      <div class="cc-empty" anvil:name="empty_box"><span class="big" aria-hidden="true">📔</span><h3>Your journey starts here</h3>
+        <p class="muted">Write about a walk, review a place you loved, or leave a note for future you. Finished walks appear here automatically.</p>
+        <div class="cc-row cc-center-row">
+          <anvil-component type="Button" name="entry2_button" prop:text="📔 New entry" prop:role='["cc-btn"]'></anvil-component>
+          <anvil-component type="Button" name="review2_button" prop:text="⭐ Review a place" prop:role='["cc-btn", "orange"]'></anvil-component>
+        </div>
+      </div>
+    </div>
+  </anvil-block>
+</anvil-form>

@@ -1,0 +1,11 @@
+---
+custom_component: true
+properties: []
+toolbox_item:
+  title: Map
+  group: CityCrossers
+help_text: |
+  A Leaflet map (OpenStreetMap tiles, emoji pins). Call setup(height, center, zoom, on_click, scroll_zoom, picking)
+  before it is shown, then use .engine (mapkit.MapView: add_marker, route, fit, clear, locate, popup_el ...).
+---
+<div class="cc-map-cell"><div class="cc-map" anvil:dom-node="map"></div></div>

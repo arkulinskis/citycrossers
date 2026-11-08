@@ -1,0 +1,26 @@
+<div class="person-cell">
+  <div class="cc-person-card">
+    <div class="banner" anvil:dom-node="banner"></div>
+    <anvil-component type="CityCrossers.Components.Avatar" name="av"></anvil-component>
+    <div class="inner">
+      <h3 class="cc-pc-name"><a anvil:dom-node="name"></a><span class="cc-verified" title="Verified" anvil:dom-node="ver"> ✔</span></h3>
+      <div class="headline" anvil:dom-node="headline"></div>
+      <div class="cc-pills">
+        <anvil-component type="RepeatingPanel" name="pills_panel" prop:item_template="CityCrossers.Items.Pill" prop:role='["contents"]'></anvil-component>
+      </div>
+      <div class="small muted" anvil:dom-node="stats"></div>
+      <div class="cc-pills">
+        <anvil-component type="RepeatingPanel" name="extra_panel" prop:item_template="CityCrossers.Items.Pill" prop:role='["contents"]'></anvil-component>
+      </div>
+      <div class="actions">
+        <a class="cc-btn ghost sm" anvil:name="view_link">View</a>
+        <a class="cc-btn sm orange" href="#plan" anvil:name="plan_link">Plan a walk</a>
+        <span class="cc-pill green" anvil:name="connected_pill">✓ Connected</span>
+        <span class="cc-pill sun" anvil:name="requested_pill">⏳ Requested</span>
+        <anvil-component type="Button" name="ignore_button" prop:text="Ignore" prop:role='["cc-btn", "ghost", "sm"]'></anvil-component>
+        <anvil-component type="Button" name="accept_button" prop:text="✓ Accept" prop:role='["cc-btn", "sm"]'></anvil-component>
+        <anvil-component type="Button" name="connect_button" prop:text="👋 Connect" prop:role='["cc-btn", "sm"]'></anvil-component>
+      </div>
+    </div>
+  </div>
+</div>

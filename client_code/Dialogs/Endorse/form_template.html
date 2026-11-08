@@ -1,0 +1,10 @@
+<div class="cc-dlg">
+  <anvil-component type="Label" name="title" prop:role='["cc-modal-title"]'></anvil-component>
+  <p class="cc-modal-sub">What were they great at? Tap once to endorse, again to undo. They get +3 pts per endorsement.</p>
+  <div class="cc-chips" role="group" aria-label="Skills">
+    <anvil-component type="RepeatingPanel" name="skills_panel" prop:item_template="CityCrossers.Items.Chip" prop:role='["contents"]'></anvil-component>
+  </div>
+  <div class="cc-row end dlg-acts">
+    <anvil-component type="Button" name="done_button" prop:text="Done" prop:role='["cc-btn"]'></anvil-component>
+  </div>
+</div>

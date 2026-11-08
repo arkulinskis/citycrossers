@@ -1,5 +1,6 @@
 """Shared server helpers: users, ids, points, notifications, route maths."""
 import math
+from typing import Any
 import random
 import string
 from datetime import datetime, timedelta
@@ -277,7 +278,7 @@ def going_count(walk):
 
 # ---------------------------------------------------------------- matching
 
-def match_score(u, walk=None, other=None):
+def match_score(u, walk=None, other: Any = None):
   """A friendly 'compatibility' percentage, Tinder style."""
   score = 40
   my_pace = u['pace'] or 'steady'

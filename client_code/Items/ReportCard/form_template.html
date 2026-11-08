@@ -1,0 +1,13 @@
+<div class="report-cell">
+  <div class="cc-card" anvil:dom-node="card">
+    <div class="cc-row between"><b anvil:dom-node="reason"></b><span class="cc-pill" anvil:dom-node="status"></span></div>
+    <div class="small muted">Reported <span anvil:dom-node="when"></span> by <a anvil:dom-node="reporter"></a></div>
+    <div class="cc-mt-sm" anvil:name="who_part"><anvil-component type="CityCrossers.Components.Person" name="who"></anvil-component></div>
+    <div class="small" anvil:dom-node="walk_row">Walk: <a anvil:dom-node="walk"></a></div>
+    <p class="cc-prewrap cc-report-details" anvil:dom-node="details"></p>
+    <div class="cc-row">
+      <anvil-component type="Button" name="resolve_button" prop:role='["cc-btn", "sm"]'></anvil-component>
+      <a class="cc-btn ghost sm" anvil:name="profile_link">View profile</a>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,20 @@
+<anvil-form layout="CityCrossers.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="cc-page">
+      <div class="cc-row between cc-page-head">
+        <div><h1 class="cc-h1">My walks 🥾</h1>
+          <p class="muted cc-lead" anvil:dom-node="lead"></p></div>
+        <a class="cc-btn orange" href="#plan">➕ Plan a walk</a>
+      </div>
+      <div class="cc-tabs cc-mb-lg" role="group" aria-label="Which walks">
+        <anvil-component type="RepeatingPanel" name="tabs_panel" prop:item_template="CityCrossers.Items.Chip" prop:role='["contents"]'></anvil-component>
+      </div>
+      <anvil-component type="RepeatingPanel" name="walks_panel" prop:item_template="CityCrossers.Items.WalkCard" prop:role='["cc-cards"]'></anvil-component>
+      <div class="cc-empty" anvil:name="empty_box">
+        <span class="big" aria-hidden="true" anvil:dom-node="e_emoji"></span><h3 anvil:dom-node="e_title"></h3>
+        <p class="muted" anvil:dom-node="e_text"></p>
+        <div anvil:name="e_link_box"><a class="cc-btn" anvil:dom-node="e_link"></a></div>
+      </div>
+    </div>
+  </anvil-block>
+</anvil-form>

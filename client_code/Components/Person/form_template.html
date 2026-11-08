@@ -1,0 +1,16 @@
+---
+custom_component: true
+properties: []
+toolbox_item:
+  title: Person line
+  group: CityCrossers
+help_text: |
+  Avatar + name (a link to the profile) + verified tick + one line under it. Call show(card, sub=None, size=44, link=True).
+---
+<div class="cc-person">
+  <span class="cc-av" anvil:dom-node="av"></span>
+  <div class="who">
+    <a class="name" anvil:dom-node="link"></a><span class="name" anvil:dom-node="plain"></span><span class="cc-verified" title="Verified" anvil:dom-node="ver"> ✔</span>
+    <div class="sub" anvil:dom-node="sub"></div>
+  </div>
+</div>

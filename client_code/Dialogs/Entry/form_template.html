@@ -1,0 +1,29 @@
+<div class="cc-dlg">
+  <anvil-component type="Label" name="title" prop:role='["cc-modal-title"]'></anvil-component>
+  <p class="cc-modal-sub">Your life, one walk at a time.</p>
+  <div class="cc-field"><span class="cc-label">Mood</span>
+    <anvil-component type="CityCrossers.Components.Chips" name="mood_chips"></anvil-component>
+  </div>
+  <label class="cc-field"><span class="cc-label">Title</span>
+    <anvil-component type="TextBox" name="title_box" prop:placeholder="A title for this moment"></anvil-component>
+  </label>
+  <div class="cc-form-row">
+    <div class="cc-field"><span class="cc-label">Date</span>
+      <anvil-component type="DatePicker" name="date_picker" prop:format="%d %b %Y" prop:pick_time="false"></anvil-component>
+    </div>
+    <label class="cc-field"><span class="cc-label">Distance (km)</span>
+      <anvil-component type="TextBox" name="km_box" prop:type="number" prop:placeholder="e.g. 14.5"></anvil-component>
+    </label>
+  </div>
+  <label class="cc-field"><span class="cc-label">Story</span>
+    <anvil-component type="TextArea" name="body_box" prop:placeholder="What happened? Who did you meet? What did you eat? Future you will love this." prop:height="150"></anvil-component>
+  </label>
+  <div class="cc-row cc-photo-row">
+    <anvil-component type="FileLoader" name="photo_loader" prop:text="📷 Add a photo" prop:file_types="image/*"></anvil-component>
+  </div>
+  <anvil-component type="CheckBox" name="public_box" prop:text="🌍 Show this on my public profile"></anvil-component>
+  <div class="cc-row end dlg-acts">
+    <anvil-component type="Button" name="no_button" prop:text="Cancel" prop:role='["cc-btn", "ghost"]'></anvil-component>
+    <anvil-component type="Button" name="yes_button" prop:text="Save entry" prop:role='["cc-btn"]'></anvil-component>
+  </div>
+</div>

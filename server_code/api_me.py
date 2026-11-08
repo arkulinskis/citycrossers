@@ -47,7 +47,7 @@ def get_me():
 @anvil.server.callable(require_user=True)
 def update_me(data):
   u = current_user()
-  ch = {}
+  ch: dict = {}
   for k in PROFILE_FIELDS:
     if k not in data:
       continue
@@ -174,7 +174,7 @@ def save_review(data):
   if place is None:
     raise Exception("Choose a place to review.")
   walk = by_id(app_tables.walks, data.get('walk_id')) if data.get('walk_id') else None
-  fields = dict(rating=rating, title=(data.get('title') or '').strip()[:100],
+  fields: dict = dict(rating=rating, title=(data.get('title') or '').strip()[:100],
                 body=(data.get('body') or '').strip()[:3000],
                 future_note=(data.get('future_note') or '').strip()[:1000],
                 is_public=bool(data.get('is_public')), would_return=bool(data.get('would_return')))
@@ -233,7 +233,7 @@ def save_entry(data):
     km = round(float(km), 1) if km not in (None, '') else None
   except (TypeError, ValueError):
     km = None
-  fields = dict(title=title[:120] or 'Untitled moment', body=body[:6000], mood=(data.get('mood') or '🙂')[:4],
+  fields: dict = dict(title=title[:120] or 'Untitled moment', body=body[:6000], mood=(data.get('mood') or '🙂')[:4],
                 is_public=bool(data.get('is_public')), entry_date=data.get('entry_date') or date.today(), km=km)
   if 'photo' in data:
     fields['photo'] = data.get('photo')
@@ -264,7 +264,7 @@ def delete_entry(entry_id):
 @anvil.server.callable(require_user=True)
 def journey():
   u = current_user()
-  items = []
+  items: list = []
   for j in app_tables.journal.search(user=u):
     items.append({'type': 'entry', 'id': rid(j), 'title': j['title'], 'body': j['body'] or '', 'mood': j['mood'] or '🙂',
                   'date': j['entry_date'], 'km': j['km'], 'photo': j['photo'], 'is_public': bool(j['is_public']),

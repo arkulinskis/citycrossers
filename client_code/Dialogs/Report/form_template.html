@@ -1,0 +1,15 @@
+<div class="cc-dlg">
+  <anvil-component type="Label" name="title" prop:role='["cc-modal-title"]'></anvil-component>
+  <div class="cc-alert danger cc-alert-top"><span class="ico" aria-hidden="true">🚨</span>
+    <span><b>In immediate danger?</b> Call your local emergency number first (999 / 112 / 911).</span></div>
+  <label class="cc-field"><span class="cc-label">Reason</span>
+    <anvil-component type="DropDown" name="reason_dd" prop:include_placeholder="true" prop:placeholder="Choose a reason…"></anvil-component>
+  </label>
+  <label class="cc-field"><span class="cc-label">Details</span>
+    <anvil-component type="TextArea" name="details_box" prop:placeholder="What happened? Include times and places if you can. This stays confidential." prop:height="120"></anvil-component>
+  </label>
+  <div class="cc-row end dlg-acts">
+    <anvil-component type="Button" name="no_button" prop:text="Cancel" prop:role='["cc-btn", "ghost"]'></anvil-component>
+    <anvil-component type="Button" name="yes_button" prop:text="Send report" prop:role='["cc-btn", "dark"]'></anvil-component>
+  </div>
+</div>

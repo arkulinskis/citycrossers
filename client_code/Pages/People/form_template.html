@@ -1,0 +1,39 @@
+<anvil-form layout="CityCrossers.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="cc-page">
+      <h1 class="cc-h1">People 👋</h1>
+      <p class="muted cc-lead cc-mb">The best walks are with people you haven't met yet. Connect, then invite them along.</p>
+      <div class="cc-card cc-search">
+        <label class="cc-grow"><span class="sr-only">Search walkers</span>
+          <anvil-component type="TextBox" name="search_box" prop:placeholder="Search walkers by name, city or headline…"></anvil-component></label>
+        <anvil-component type="Button" name="search_button" prop:text="Search" prop:role='["cc-btn"]'></anvil-component>
+      </div>
+
+      <div anvil:name="results_part">
+        <div class="cc-section-title"><h2>🔎 Results</h2><anvil-component type="Button" name="clear_button" prop:text="Clear" prop:role='["cc-btn", "ghost", "sm"]'></anvil-component></div>
+        <anvil-component type="RepeatingPanel" name="results_panel" prop:item_template="CityCrossers.Items.PersonCard" prop:role='["cc-cards"]'></anvil-component>
+        <div class="cc-empty" anvil:name="no_results"><span class="big" aria-hidden="true">🔎</span><h3>Nobody found</h3><p class="muted">Try another name or city.</p></div>
+      </div>
+
+      <div anvil:name="incoming_part">
+        <div class="cc-section-title"><h2>👋 Want to walk with you</h2></div>
+        <anvil-component type="RepeatingPanel" name="incoming_panel" prop:item_template="CityCrossers.Items.PersonCard" prop:role='["cc-cards"]'></anvil-component>
+      </div>
+
+      <div class="cc-section-title"><h2 anvil:dom-node="crew_h">🤝 Your crew</h2></div>
+      <anvil-component type="RepeatingPanel" name="friends_panel" prop:item_template="CityCrossers.Items.PersonCard" prop:role='["cc-cards"]'></anvil-component>
+      <div class="cc-empty" anvil:name="no_friends"><span class="big" aria-hidden="true">🫂</span><h3>No connections yet</h3>
+        <p class="muted">Connect with walkers below, or walk with someone first. Everyone's a stranger until km 3.</p></div>
+
+      <div anvil:name="suggest_part">
+        <div class="cc-section-title"><h2>✨ Walkers you might click with</h2><span class="small muted">Ranked by pace, distance &amp; interests</span></div>
+        <anvil-component type="RepeatingPanel" name="suggest_panel" prop:item_template="CityCrossers.Items.PersonCard" prop:role='["cc-cards"]'></anvil-component>
+      </div>
+
+      <div anvil:name="outgoing_part">
+        <div class="cc-section-title"><h3>⏳ Requests you sent</h3></div>
+        <anvil-component type="RepeatingPanel" name="outgoing_panel" prop:item_template="CityCrossers.Items.PersonRow" prop:role='["cc-chip-row"]'></anvil-component>
+      </div>
+    </div>
+  </anvil-block>
+</anvil-form>

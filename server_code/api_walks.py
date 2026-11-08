@@ -239,7 +239,7 @@ def get_walk(walk_id):
 def my_walks():
   u = current_user()
   cutoff = now() - timedelta(hours=18)
-  res = {'upcoming': [], 'hosting': [], 'invites': [], 'pending': [], 'past': [], 'requests_to_review': 0}
+  res: dict = {'upcoming': [], 'hosting': [], 'invites': [], 'pending': [], 'past': [], 'requests_to_review': 0}
   for m in app_tables.walk_members.search(user=u):
     w = m['walk']
     if w is None or w['status'] == 'cancelled':

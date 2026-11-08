@@ -1,0 +1,19 @@
+<div class="cc-dlg">
+  <h2 class="cc-modal-title">💌 Invite people</h2>
+  <p class="cc-modal-sub">Friends get a notification (and an email if they've switched those on).</p>
+  <div class="cc-field"><span class="cc-label">Your connections</span>
+    <anvil-component type="CityCrossers.Components.Chips" name="friend_chips"></anvil-component>
+    <p class="muted small" anvil:name="no_friends">No connections yet. Find walkers on the <a href="#people">People</a> page, or invite by email below.</p>
+  </div>
+  <label class="cc-field"><span class="cc-label">Or invite by email</span>
+    <anvil-component type="TextBox" name="email_box" prop:type="email" prop:placeholder="friend@example.com"></anvil-component>
+    <span class="hint">We'll send them the route and a link to join.</span>
+  </label>
+  <div class="cc-row between dlg-acts">
+    <anvil-component type="Button" name="copy_button" prop:text="🔗 Copy link" prop:role='["cc-btn", "ghost", "sm"]'></anvil-component>
+    <div class="cc-row">
+      <anvil-component type="Button" name="no_button" prop:text="Close" prop:role='["cc-btn", "ghost"]'></anvil-component>
+      <anvil-component type="Button" name="yes_button" prop:text="Send invites" prop:role='["cc-btn"]'></anvil-component>
+    </div>
+  </div>
+</div>

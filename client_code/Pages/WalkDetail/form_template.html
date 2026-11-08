@@ -1,0 +1,148 @@
+<anvil-form layout="CityCrossers.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="cc-page">
+      <div class="cc-empty" anvil:name="missing_box"><span class="big" aria-hidden="true">🙈</span><h3>We can't show this walk</h3>
+        <p class="muted">It may be friends-only, cancelled, or the link is wrong.</p><a class="cc-btn" href="#discover">Back to Discover</a></div>
+      <div anvil:name="walk_box">
+        <a href="#walks" class="small cc-back">← My walks</a>
+        <div class="cc-walk-hero cc-fade-in" anvil:dom-node="hero">
+          <span class="emo" anvil:dom-node="emo" aria-hidden="true"></span>
+          <div class="cc-pills cc-hero-pills">
+            <span class="cc-pill" anvil:dom-node="p_vibe"></span><span class="cc-pill" anvil:dom-node="p_vis"></span>
+            <span class="cc-pill dark" anvil:dom-node="p_status"></span><span class="cc-pill dark" anvil:dom-node="p_match"></span>
+          </div>
+          <h1 anvil:dom-node="title"></h1>
+          <div class="facts">
+            <span class="cc-pill" anvil:dom-node="f_date"></span><span class="cc-pill" anvil:dom-node="f_time"></span>
+            <span class="cc-pill" anvil:dom-node="f_dist"></span><span class="cc-pill" anvil:dom-node="f_dur"></span>
+            <span class="cc-pill" anvil:dom-node="f_pace"></span><span class="cc-pill" anvil:dom-node="f_going"></span>
+          </div>
+        </div>
+        <div class="cc-actionbar">
+          <span class="state" anvil:dom-node="state_text"></span>
+          <b class="cc-req-wait" anvil:dom-node="req_text"></b>
+          <span class="cc-spacer"></span>
+          <anvil-component type="Button" name="journal_button" prop:text="📔 Write about it" prop:role='["cc-btn", "sm"]'></anvil-component>
+          <anvil-component type="Button" name="complete_button" prop:text="🏁 Mark completed" prop:role='["cc-btn", "sm"]'></anvil-component>
+          <anvil-component type="Button" name="edit_button" prop:text="✏️ Edit" prop:role='["cc-btn", "ghost", "sm"]'></anvil-component>
+          <anvil-component type="Button" name="invite_button" prop:text="💌 Invite" prop:role='["cc-btn", "orange", "sm"]'></anvil-component>
+          <anvil-component type="Button" name="public_button" prop:text="🌍 Open to public" prop:role='["cc-btn", "ghost", "sm"]'></anvil-component>
+          <anvil-component type="Button" name="friends_button" prop:text="👯 Make friends-only" prop:role='["cc-btn", "ghost", "sm"]'></anvil-component>
+          <anvil-component type="Button" name="share_button" prop:text="📤 Share plan" prop:role='["cc-btn", "ghost", "sm"]'></anvil-component>
+          <anvil-component type="Button" name="cancel_button" prop:text="Cancel walk" prop:role='["cc-btn", "danger", "sm"]'></anvil-component>
+          <anvil-component type="Button" name="leave_button" prop:text="Can’t make it" prop:role='["cc-btn", "danger", "sm"]'></anvil-component>
+          <anvil-component type="Button" name="decline_button" prop:text="Can’t make it" prop:role='["cc-btn", "ghost", "sm"]'></anvil-component>
+          <anvil-component type="Button" name="accept_button" prop:text="💚 I’m in!" prop:role='["cc-btn", "lg"]'></anvil-component>
+          <anvil-component type="Button" name="join_button" prop:text="💚 Join this walk" prop:role='["cc-btn", "lg"]'></anvil-component>
+        </div>
+
+        <div class="cc-grid two cc-detail-grid">
+          <div class="cc-stack">
+            <div class="cc-card tint-green" anvil:name="post_card">
+              <h2 class="cc-card-h">🏁 How was it?</h2>
+              <p class="muted">Earn points by reviewing the stops (+8 to 12 each), endorsing your crew, and writing it into your Journey.</p>
+              <div class="cc-grid halves">
+                <div><h3 class="cc-sub-h">Rate the stops</h3>
+                  <anvil-component type="RepeatingPanel" name="rate_panel" prop:item_template="CityCrossers.Items.ReviewStopRow"></anvil-component></div>
+                <div><h3 class="cc-sub-h">Endorse your crew</h3>
+                  <anvil-component type="RepeatingPanel" name="endorse_panel" prop:item_template="CityCrossers.Items.PersonRow"></anvil-component>
+                  <p class="small muted" anvil:name="just_you">Just you this time!</p></div>
+              </div>
+              <div class="cc-mt"><anvil-component type="Button" name="journal2_button" prop:text="📔 Write it into my Journey" prop:role='["cc-btn"]'></anvil-component></div>
+            </div>
+
+            <div class="cc-card">
+              <div class="cc-card-title"><h2 class="cc-card-h">🗺️ Route &amp; stops</h2><span class="small muted" anvil:dom-node="stops_count"></span></div>
+              <div class="cc-map-wrap cc-mb"><anvil-component type="CityCrossers.Components.MapView" name="map_view"></anvil-component></div>
+              <div class="cc-timeline">
+                <anvil-component type="RepeatingPanel" name="timeline_panel" prop:item_template="CityCrossers.Items.TimelineStop"></anvil-component>
+              </div>
+              <p class="muted" anvil:name="no_stops">No stops yet.</p>
+              <p class="small muted cc-tl-end" anvil:dom-node="tl_end"></p>
+            </div>
+
+            <div class="cc-card" anvil:name="proposed_card">
+              <div class="cc-card-title"><h2 class="cc-card-h">🗳️ Suggested stops</h2>
+                <anvil-component type="Button" name="suggest_button" prop:text="➕ Suggest a stop" prop:role='["cc-btn", "ghost", "sm"]'></anvil-component></div>
+              <p class="small muted cc-card-help">Walkers vote, the host decides. Accepted stops earn the suggester +5 pts.</p>
+              <anvil-component type="RepeatingPanel" name="proposed_panel" prop:item_template="CityCrossers.Items.ProposedRow"></anvil-component>
+              <p class="small muted" anvil:name="no_proposed">Know a great bakery on the way? Suggest it and the group votes.</p>
+            </div>
+
+            <div class="cc-card">
+              <h2 class="cc-card-h">📝 About this walk</h2>
+              <p class="cc-prewrap" anvil:dom-node="desc"></p>
+              <div class="cc-pills">
+                <anvil-component type="RepeatingPanel" name="tags_panel" prop:item_template="CityCrossers.Items.Pill" prop:role='["contents"]'></anvil-component>
+              </div>
+              <div class="cc-alert sky" anvil:name="meet_alert"><span class="ico" aria-hidden="true">📍</span><span><b>Meeting spot:</b> <span anvil:dom-node="meet_text"></span></span></div>
+              <p class="small muted cc-mt" anvil:name="meet_locked">🔒 Exact meeting details are shared with people going.</p>
+            </div>
+
+            <div class="cc-card tint-sun" anvil:name="chat_locked">
+              <h2 class="cc-card-h">💬 Group chat</h2>
+              <p class="muted cc-m0">Join the walk to chat with the group, coordinate snacks and say hi before you meet.</p>
+            </div>
+            <div class="cc-card" anvil:name="chat_card">
+              <div class="cc-card-title"><h2 class="cc-card-h">💬 Group chat</h2><span class="small muted" anvil:dom-node="msg_count"></span></div>
+              <div class="cc-chat" anvil:dom-node="chat">
+                <anvil-component type="RepeatingPanel" name="chat_panel" prop:item_template="CityCrossers.Items.ChatMsg" prop:role='["contents"]'></anvil-component>
+                <p class="small muted center" anvil:name="no_msgs">No messages yet. Break the ice! 🧊</p>
+              </div>
+              <div class="cc-row cc-chat-send">
+                <label class="cc-grow"><span class="sr-only">Message to the group</span>
+                  <anvil-component type="TextBox" name="chat_box" prop:placeholder="Say something to the group… (e.g. “I’ll bring plasters!”)"></anvil-component></label>
+                <anvil-component type="Button" name="send_button" prop:text="Send" prop:role='["cc-btn"]'></anvil-component>
+              </div>
+            </div>
+          </div>
+
+          <div class="cc-stack">
+            <div class="cc-card" anvil:name="host_card">
+              <div class="small muted cc-hosted-by">Hosted by</div>
+              <anvil-component type="CityCrossers.Components.Person" name="host"></anvil-component>
+              <div class="cc-pills cc-mt-sm">
+                <span class="cc-pill sun" anvil:dom-node="h_level"></span><span class="cc-pill" anvil:dom-node="h_walks"></span><span class="cc-pill" anvil:dom-node="h_km"></span>
+              </div>
+            </div>
+            <div class="cc-card">
+              <div class="cc-card-title"><h2 class="cc-card-h">👥 The crew</h2><span class="small muted" anvil:dom-node="crew_count"></span></div>
+              <div class="cc-progress cc-mb-sm" role="progressbar" aria-label="Spots taken" anvil:dom-node="crew_bar_box"><div anvil:dom-node="crew_bar"></div></div>
+              <anvil-component type="RepeatingPanel" name="going_panel" prop:item_template="CityCrossers.Items.PersonRow"></anvil-component>
+              <p class="muted small" anvil:name="nobody">Nobody yet.</p>
+              <div anvil:name="requests_part"><h3 class="cc-sub-h cc-mt">🙋 Requests</h3>
+                <anvil-component type="RepeatingPanel" name="requests_panel" prop:item_template="CityCrossers.Items.PersonRow"></anvil-component></div>
+              <div anvil:name="waitlist_part"><h3 class="cc-sub-h cc-mt">🕒 Waitlist</h3>
+                <anvil-component type="RepeatingPanel" name="waitlist_panel" prop:item_template="CityCrossers.Items.PersonRow"></anvil-component></div>
+              <p class="small muted cc-mt-sm" anvil:dom-node="invited"></p>
+            </div>
+            <div class="cc-card">
+              <h2 class="cc-card-h" anvil:dom-node="wx_title">🌤️ Walk-day forecast</h2>
+              <p class="small muted cc-m0" anvil:dom-node="wx_note"></p>
+              <div anvil:name="wx_box">
+                <div class="cc-weather"><span class="e" anvil:dom-node="wx_emoji" aria-hidden="true"></span>
+                  <div><b anvil:dom-node="wx_temp"></b><div class="small muted" anvil:dom-node="wx_label"></div><div class="small muted" anvil:dom-node="wx_range"></div></div></div>
+                <p class="small cc-wx-tip" anvil:dom-node="wx_advice"></p>
+              </div>
+            </div>
+            <div class="cc-card tint-sky">
+              <h2 class="cc-card-h">🛟 Walk safe</h2>
+              <ul class="cc-safety-list small">
+                <li><span class="i" aria-hidden="true">📍</span><span>Meet at the public start point, not someone's home or car.</span></li>
+                <li><span class="i" aria-hidden="true">📲</span><span>Share this plan with someone you trust before you set off.</span></li>
+                <li><span class="i" aria-hidden="true">👥</span><span>Stay with the group. Let someone know if you head off early.</span></li>
+                <li><span class="i" aria-hidden="true">💧</span><span anvil:dom-node="water"></span></li>
+                <li><span class="i" aria-hidden="true">🌗</span><span>Long walk? Check sunset time and bring a light layer.</span></li>
+              </ul>
+              <div class="cc-row cc-mt-sm">
+                <anvil-component type="Button" name="share2_button" prop:text="📤 Share my plan" prop:role='["cc-btn", "sm"]'></anvil-component>
+                <anvil-component type="Button" name="report_button" prop:text="🚩 Report" prop:role='["cc-btn", "ghost", "sm"]'></anvil-component>
+                <a class="small" href="#safety">Safety center →</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </anvil-block>
+</anvil-form>

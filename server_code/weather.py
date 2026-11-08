@@ -46,7 +46,7 @@ def walk_forecast(walk_id):
          "&hourly=temperature_2m,precipitation_probability,weather_code&timezone=UTC"
          "&start_date=%s&end_date=%s" % (w['lat'], w['lng'], day, day))
   try:
-    data = anvil.http.request(url, json=True, timeout=8)
+    data: dict = anvil.http.request(url, json=True, timeout=8)  # type: ignore
   except Exception as e:
     print("forecast failed", e)
     return None

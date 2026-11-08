@@ -1,0 +1,23 @@
+<div class="cc-dlg">
+  <anvil-component type="Label" name="title" prop:role='["cc-modal-title"]'></anvil-component>
+  <anvil-component type="Label" name="sub" prop:role='["cc-modal-sub"]'></anvil-component>
+  <div anvil:name="map_part">
+    <div class="cc-map-wrap cc-dlg-map">
+      <anvil-component type="CityCrossers.Components.MapView" name="map_view"></anvil-component>
+    </div>
+    <anvil-component type="Label" name="pick_hint" prop:text="👆 Click the map to drop a pin." prop:role='["small-muted"]'></anvil-component>
+  </div>
+  <label class="cc-field"><span class="cc-label">Name</span>
+    <anvil-component type="TextBox" name="name_box" prop:placeholder="e.g. Kettle &amp; Crumb, or &quot;the bench with the view&quot;"></anvil-component>
+  </label>
+  <div class="cc-field"><span class="cc-label">What kind of stop?</span>
+    <anvil-component type="CityCrossers.Components.Chips" name="kind_chips"></anvil-component>
+  </div>
+  <label class="cc-field" anvil:name="desc_field"><span class="cc-label">Description</span>
+    <anvil-component type="TextArea" name="desc_box" prop:placeholder="What makes it a good stop? (optional)" prop:height="70"></anvil-component>
+  </label>
+  <div class="cc-row end dlg-acts">
+    <anvil-component type="Button" name="no_button" prop:text="Cancel" prop:role='["cc-btn", "ghost"]'></anvil-component>
+    <anvil-component type="Button" name="yes_button" prop:text="Add" prop:role='["cc-btn"]'></anvil-component>
+  </div>
+</div>

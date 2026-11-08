@@ -36,15 +36,22 @@ External: Leaflet 1.9.4 + OpenStreetMap tiles (no API key; CARTO until Nov 2026)
 ## Code map
 
 ```
-client_code/
-  Main/            app shell + hash router (#walk/ID, #u/ID, #plan, ...)
-  Landing/         marketing page (markup in landing_content.py)
-  Discover/ MapPage/ WalkEditor/ WalkDetail/ MyWalks/ People/
-  Profile/ ProfileEdit/ Journey/ Perks/ Admin/ Safety/ Notifications/
-  ui.py            constants, HTML builders, formatting, server-call wrapper, chips/stars widgets
-  dialogs.py       auth, safety pledge, place/stop picker, reviews, journal entries, reports, invites
-  mapkit.py        Leaflet wrapper
-  state.py         signed-in user, counts, navigation
+client_code/                 native Anvil Forms (Python + HTML templates)
+  startup.py       start-up: legal kit, get_me, router.start()
+  router.py        hash addresses -> page Forms (#walk/ID, #u/ID, #plan, ...), visitors -> landing
+  state.py         signed-in walker, counts, server-call wrapper (toasts, pledge, sign-in), DOM helpers
+  auth.py          sign in / up / reset / Google / sign out
+  ui.py            constants (kinds, paces, vibes, levels), formatting, route maths
+  dialogs.py       one call per dialog (pledge, place form, review, entry, report, invite, place details, info)
+  mapkit.py        the Leaflet engine (Components/MapView wraps it)
+  avatar.py        draws avatars into DOM nodes
+  Layouts/Shell    header, walker menu, notifications poll, footer, phone tab bar
+  Pages/           Landing Discover MapPage WalkEditor WalkDetail MyWalks People Profile ProfileEdit
+                   Journey Perks Admin Safety Notifications
+  Items/           RepeatingPanel rows and cards (WalkCard, PersonCard, TimelineStop, Chip, Option ...)
+  Components/      MapView, Avatar, AvatarStack, Strip, Person, Stars, Chips
+  Dialogs/         AuthDialog SafetyPledge PlaceForm Review ReviewPick Entry Report Invite PlaceDetails
+                   Prompt Endorse PickWalk Partner Info
 server_code/
   common.py        users, ids, points, levels, notifications, route maths, match score
   serial.py        rows → client-safe dicts (no emails or emergency contacts leak)
@@ -54,7 +61,8 @@ server_code/
   api_admin.py     admin tools
   seed.py          demo content
   weather.py       walk-day forecast
-theme/assets/      theme.css (design system), cc.js (swipe, confetti, clipboard)
+theme/assets/      app.css (design system + Forms role layer), theme.css (spinner), app-kit.js, cc.js (swipe, confetti, clipboard, Watch video)
+tools/             check.py, ui_test.py + ui/smoke.js, testing/test_server.py
 ```
 
 ## Design

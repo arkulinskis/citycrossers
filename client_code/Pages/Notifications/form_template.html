@@ -1,0 +1,11 @@
+<anvil-form layout="CityCrossers.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="cc-page narrow">
+      <h1 class="cc-h1">🔔 Notifications</h1>
+      <div class="cc-notif-list">
+        <anvil-component type="RepeatingPanel" name="list_panel" prop:item_template="CityCrossers.Items.NotifRow" prop:role='["cc-list"]'></anvil-component>
+      </div>
+      <div class="cc-empty" anvil:name="empty_box"><span class="big" aria-hidden="true">🔔</span><h3>All quiet</h3><p class="muted">Invites, requests and endorsements will show up here.</p></div>
+    </div>
+  </anvil-block>
+</anvil-form>
