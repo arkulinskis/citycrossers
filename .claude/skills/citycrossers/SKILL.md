@@ -10,7 +10,7 @@ description: Context, workflow and recipes for CityCrossers, the user's Anvil wa
 **Where it lives:**
 - Repo **github.com/arkulinskis/citycrossers**; Anvil pulls `master`. Live: https://citycrossers.com.
 - Folder `C:\Users\arkvi\Documents\CLAUDE\citycrossers-forms` = the git clone ("git" layout: the folder *is* the Anvil app).
-  Converted to native Forms on branch `forms` (Nov 2026); the old classic folder `citycrossers` has the HTML-string version.
+  Native Forms on master since 2026-11-08 (forms branch merged); the old classic folder `citycrossers` is retired (RETIRED.md): never commit or push from it.
 - README.md describes every area; APP_MAP.md is the code map (read it first).
 
 **What the user wants:** bright, fresh look with a hint of "there will be breaks and food stops" (Bricolage Grotesque + DM Sans, green #17A673, orange food stops, sun for points). Map of places people can propose. Creative, assumed details are welcome. Claude deploys. Light theme only (no dark palette yet). Every page must fit 390 px.
