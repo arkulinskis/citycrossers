@@ -37,6 +37,6 @@ class DealCard(DealCardTemplate):
             self.parent.raise_event("x-place", pid=(self.item.get("place") or {}).get("id"))
 
     def card_key(self, event):
-        if event.key in ("Enter", " "):
+        if getattr(event, "key", None) in ("Enter", " "):
             event.preventDefault()
             self.card_click(event)
