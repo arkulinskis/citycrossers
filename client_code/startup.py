@@ -3,6 +3,9 @@ in (Anvil's loading spinner shows meanwhile), then the page for the address in t
 import anvil.server
 
 from . import legal, router, state
+from . import session_guard
+
+session_guard.start()  # an expired server session reloads quietly instead of "Session expired, refresh now"
 
 LEGAL_THEME = {"accent": "#0E8A5D"}  # colours for the Privacy & Terms page (CityCrossers green, --green-d in app.css)
 
