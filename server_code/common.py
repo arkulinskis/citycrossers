@@ -99,7 +99,7 @@ def ensure_defaults(u):
   if u['interests'] is None: ch['interests'] = []
   for k in ('walks_count', 'km_total', 'people_met'):
     if u[k] is None: ch[k] = 0
-  if u['email'] and u['email'].strip().lower() in ADMIN_EMAILS and not u['is_admin']:
+  if AdminAccess.may_promote(u) and not u['is_admin']:
     ch['is_admin'] = True
   if ch:
     u.update(**ch)
