@@ -25,6 +25,8 @@ sys.path[:0] = [str(HERE / "mock"), str(_tmp)]
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 import anvil.server  # noqa: E402
 import anvil.users  # noqa: E402
+import anvil.secrets  # noqa: E402
+anvil.secrets.SECRETS["admin_emails"] = "admin@example.com"  # the App Secret, faked
 from anvil.tables import app_tables as T  # noqa: E402
 
 M = {p.stem: importlib.import_module("app." + p.stem) for p in sorted((PROJECT / "server_code").glob("*.py"))}
@@ -70,7 +72,7 @@ def rid(row):
 
 
 # ---------------------------------------------------------------------------------- accounts
-admin = person("arkulinskis@gmail.com", "The Admin")
+admin = person("admin@example.com", "The Admin")
 ana = person("ana@example.com", "Ana Walker")
 ben = person("ben@example.com", "Ben Rambler")
 

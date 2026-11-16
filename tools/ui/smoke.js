@@ -145,8 +145,8 @@
 
     // ---- admin (ADMIN_EMAILS in server_code/common.py): sign up the first time, log in after that
     const adminPw = 'Cc-smoke-adm-93Kx-7q';
-    if (!(await authDialog('signup', 'Admin Tester', 'arkulinskis@gmail.com', adminPw))) {
-      if (!(await authDialog('login', '', 'arkulinskis@gmail.com', adminPw))) throw new Error('admin sign-in failed');
+    if (!(await authDialog('signup', 'Admin Tester', 'admin@example.com', adminPw))) {
+      if (!(await authDialog('login', '', 'admin@example.com', adminPw))) throw new Error('admin sign-in failed');
     }
     await open('#admin', /Run the club/, () => $$('.cc-main .cc-tabs button').length >= 6);
     for (const t of [/Places/, /Safety reports/, /Users/, /Perks/, /Demo data/, /Deals/]) {

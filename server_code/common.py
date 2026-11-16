@@ -12,9 +12,10 @@ import anvil.tz
 import anvil.tables as tables
 import anvil.tables.query as q
 from anvil.tables import app_tables
+from . import AdminAccess
 
 # Anyone signing up with one of these emails becomes an admin automatically.
-ADMIN_EMAILS = {"arkulinskis@gmail.com"}
+ADMIN_EMAILS = AdminAccess.ADMIN_EMAILS  # from the App Secret `admin_emails`
 
 # km/h for each pace
 PACES = {'stroll': 3.6, 'steady': 4.5, 'brisk': 5.4}
