@@ -81,6 +81,92 @@ def short_code(prefix="CC"):
   return prefix + "-" + "".join(random.choice(string.ascii_uppercase + string.digits) for _ in range(6))
 
 
+def col(row, name, default=None):
+  """A column added after launch (confirmed_at, repeat_of, tz_name ...), read safely: until the user accepts Anvil's
+  Schema Mismatch alert the column doesn't exist, and the page must still load."""
+  if row is None:
+    return default
+  try:
+    v = row[name]
+  except Exception:
+    return default
+  return default if v is None else v
+
+
+def set_col(row, name, value):
+  """Write a newer column in its own guarded statement (never inside the update that saves everything else)."""
+  try:
+    row[name] = value
+    return True
+  except Exception:
+    return False
+
+
+# ---------------------------------------------------------------- walk time zones
+# Walks store the host's time zone (tz_name, an IANA name like "America/Toronto") and its offset from UTC at the
+# walk's start (tz_offset, minutes east of UTC), both sent by the host's browser when the walk is saved. That is
+# enough to write "Sun 7 Dec, 09:30 (Toronto time)" in emails and link previews without a time zone database.
+DAY_NAMES = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October',
+               'November', 'December']
+
+
+def clean_tz(name, offset):
+  """(tz_name, tz_offset) from the browser, checked; (None, None) when missing or odd."""
+  try:
+    off = int(round(float(offset)))
+  except (TypeError, ValueError):
+    return None, None
+  if not -14 * 60 <= off <= 14 * 60:
+    return None, None
+  name = str(name or '')[:60]
+  if name and not all(ch.isalnum() or ch in '/_-+' for ch in name):
+    name = ''
+  return (name or None), off
+
+
+def tz_label(name, offset):
+  """'Toronto time', or 'UTC-5' when only the offset is known."""
+  if name and '/' in name:
+    return name.split('/')[-1].replace('_', ' ') + ' time'
+  if offset is None:
+    return 'UTC'
+  h, m = divmod(abs(int(offset)), 60)
+  return 'UTC%s%d%s' % ('+' if offset >= 0 else '-', h, (':%02d' % m) if m else '')
+
+
+def walk_tz(w, fallback=None):
+  """(tz_name, tz_offset) of a walk; `fallback` = (name, offset) from the caller's browser for walks saved before
+  time zones were stored."""
+  off = col(w, 'tz_offset')
+  if off is not None:
+    return col(w, 'tz_name'), int(off)
+  if fallback:
+    return clean_tz(fallback[0], fallback[1])
+  return None, None
+
+
+def local_start(w, fallback=None):
+  """(the walk's start as a wall-clock datetime where it happens, 'Toronto time' / 'UTC' label)."""
+  start = aware(w['start']) if w is not None else None
+  if start is None:
+    return None, ''
+  name, off = walk_tz(w, fallback)
+  if off is None:
+    return start, 'UTC'
+  return start + timedelta(minutes=off), tz_label(name, off)
+
+
+def fmt_local(w, fallback=None, long=False):
+  """'Sunday 7 December, 09:30 (Toronto time)' (long) or 'Sun 7 Dec, 09:30'; '' when the walk has no start."""
+  t, label = local_start(w, fallback)
+  if t is None:
+    return ''
+  if long:
+    return '%s %d %s, %02d:%02d (%s)' % (DAY_NAMES[t.weekday()], t.day, MONTH_NAMES[t.month - 1], t.hour, t.minute, label)
+  return '%s %d %s, %02d:%02d' % (DAY_NAMES[t.weekday()][:3], t.day, MONTH_NAMES[t.month - 1][:3], t.hour, t.minute)
+
+
 # ---------------------------------------------------------------- users
 
 def ensure_defaults(u):
@@ -275,6 +361,29 @@ def membership(walk, user):
 
 def going_count(walk):
   return len(app_tables.walk_members.search(walk=walk, status='going'))
+
+
+def show_up(u):
+  """Attendance: walks finished (walks_count) and walks the host marked as missed in the roll call (no_show rows).
+  {'came', 'missed', 'total'}."""
+  if u is None:
+    return {'came': 0, 'missed': 0, 'total': 0}
+  came = u['walks_count'] or 0
+  missed = len(app_tables.walk_members.search(user=u, status='no_show'))
+  return {'came': came, 'missed': missed, 'total': came + missed}
+
+
+def edition_of(w):
+  """1 for a one-off walk; 3 for the third walk in a weekly series (follows walks.repeat_of, at most 52 back)."""
+  n, cur, seen = 1, w, set()
+  while cur is not None and n < 53:
+    prev = col(cur, 'repeat_of')
+    if prev is None or prev.get_id() in seen:
+      break
+    seen.add(prev.get_id())
+    n += 1
+    cur = prev
+  return n
 
 
 # ---------------------------------------------------------------- matching

@@ -22,20 +22,39 @@ class WalkEditor(WalkEditorTemplate):
     """#plan (also #plan/from/<place>) and #edit/<walk>: plan a walk. The basics (name, vibe, description, tags),
     when and how fast, the route on the map (click to drop stops or "Add to route" on a place pin; live distance,
     time and breaks, with break-manifesto warnings), who's coming (friends only or public, approval, invites).
-    create_walk / update_walk, then the walk page."""
+    create_walk / update_walk, then the walk page.
+    #plan/again/<walk> (copy_of): "Host it again". The host gets the whole walk back (route, stops, title, vibe, pace,
+    size, meeting spot) on the same weekday and time the next week, plus "Invite last time's crew"; anyone else who
+    went gets the route only ("Walk this route again"). walk_copy, then create_walk(copy_of, invite_crew).
+    Saving sends the browser's time zone (tz_name/tz_offset) so emails and link previews show the walk's local time."""
 
-    def __init__(self, walk_id=None, start_place=None, **properties):
+    def __init__(self, walk_id=None, start_place=None, copy_of=None, **properties):
         super().__init__(**properties)
         self.walk_id = walk_id
+        self.copy_of = copy_of
+        self.copy_data = state.loose({})
         self.stops = []
         existing = None
         self.denied_box.visible = False
+        self.crew_part.visible = False
         if walk_id:
             existing = state.call('get_walk_for_edit', walk_id)
             if existing is state.FAIL:
                 self.denied_box.visible = True
                 self.editor.visible = False
                 return
+        elif copy_of:
+            existing = state.call('walk_copy', copy_of)
+            if existing is state.FAIL:
+                state.text(self.dom_nodes['denied_h'], "Can't copy this walk")
+                state.text(self.dom_nodes['denied_p'], "It may be friends-only, or it no longer exists.")
+                self.denied_box.visible = True
+                self.editor.visible = False
+                return
+            self.copy_data = existing
+            t = ui.local(existing['orig_start'])
+            existing['start'] = datetime.datetime(t.year, t.month, t.day, t.hour, t.minute) + datetime.timedelta(
+                days=7 * existing['weeks'])  # same weekday and wall-clock time, a week (or more) later
         md = state.call('map_data')
         self.places = md['places'] if md is not state.FAIL else []
         friends = state.call('my_friends')
@@ -46,6 +65,23 @@ class WalkEditor(WalkEditorTemplate):
         state.text(self.dom_nodes['lead'], "Changes notify everyone who's going." if editing else
                    "Pick a route, sprinkle in snack stops, and invite your crew. We'll handle the maths.")
         self.save_button.text = 'Save changes' if editing else 'Create walk & notify friends 🎉'
+        if copy_of:
+            host = bool(ex.get('is_host'))
+            when = ui.fmt_when(ex['start'])
+            if host:
+                state.text(self.dom_nodes['h1'], '🔁 Host it again')
+                state.text(self.dom_nodes['lead'], "Same route, stops and group size, on %s. This will be edition %d of "
+                           "your weekly walk: change anything you like." % (when, ex.get('edition_next') or 2))
+                self.save_button.text = 'Post next week’s walk 🔁'
+                crew = ex.get('crew') or 0
+                self.crew_part.visible = crew > 0
+                self.crew_box.text = "💌 Invite last time's crew (%d)" % crew
+                self.crew_box.checked = True
+            else:
+                state.text(self.dom_nodes['h1'], '🗺️ Walk this route again')
+                state.text(self.dom_nodes['lead'], "Host it again with your own crew: the same route and stops, on %s or "
+                           "whenever suits you. The meeting spot and invites are yours to set." % when)
+                self.save_button.text = 'Create walk 🎉'
         self.title_box.text = ex.get('title') or ''
         self.desc_box.text = ex.get('description') or ''
         self.when_picker.date = ex.get('start') or next_saturday()
@@ -230,7 +266,8 @@ class WalkEditor(WalkEditorTemplate):
     # ------------------------------------------------------------ save
     @handle('cancel_button', 'click')
     def cancel_button_click(self, **event_args):
-        router.go('walk/' + self.walk_id if self.walk_id else 'discover')
+        back = self.walk_id or self.copy_of
+        router.go('walk/' + back if back else 'discover')
 
     @handle('save_button', 'click')
     def save_button_click(self, **event_args):
@@ -252,6 +289,12 @@ class WalkEditor(WalkEditorTemplate):
             'meeting_note': self.meeting_box.text, 'stops': self.stops,
             'invite_ids': self.invite_chips.value if self.friends else [],
         }
+        tz = state.browser_tz(self.when_picker.date)  # the time zone at the walk's start, for emails and link previews
+        if tz:
+            data['tz_name'], data['tz_offset'] = tz.get('name'), tz.get('offset')
+        if self.copy_of:
+            data['copy_of'] = self.copy_of
+            data['invite_crew'] = bool(self.crew_part.visible and self.crew_box.checked)
         if self.walk_id:
             wid = state.call('update_walk', self.walk_id, data)
             if wid is state.FAIL:

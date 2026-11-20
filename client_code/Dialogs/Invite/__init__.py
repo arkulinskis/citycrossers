@@ -2,7 +2,7 @@ from anvil import *
 import anvil.server
 
 from ._anvil_designer import InviteTemplate
-from ... import state
+from ... import state, ui
 
 
 class Invite(InviteTemplate):
@@ -16,7 +16,7 @@ class Invite(InviteTemplate):
         self.friend_chips.setup([(f["id"], f["name"]) for f in friends], multi=True)
         self.friend_chips.visible = bool(friends)
         self.no_friends.visible = not friends
-        self.link = anvil.server.get_app_origin() + "/#walk/" + self.walk.get("id", "")
+        self.link = anvil.server.get_app_origin().rstrip("/") + "/w/" + self.walk.get("id", "")
         state.set_control_attr(self.email_box, "autocomplete", "email")
 
     @handle("yes_button", "click")
@@ -29,7 +29,8 @@ class Invite(InviteTemplate):
                 return
             n = res
         if (self.email_box.text or "").strip():
-            msg = state.call("invite_by_email", self.walk["id"], self.email_box.text)
+            start = ui.local(self.walk.get("start"))
+            msg = state.call("invite_by_email", self.walk["id"], self.email_box.text, state.browser_tz(start))
             if msg is state.FAIL:
                 return
             state.toast(msg)

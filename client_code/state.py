@@ -21,7 +21,7 @@ from anvil.js import window
 
 FAIL = object()
 
-_state: dict = {"me": None, "counts": {}, "after": None}
+_state: dict = {"me": None, "counts": {}, "after": None, "join": None}
 
 
 # ---------------------------------------------------------------- who is signed in
@@ -85,6 +85,34 @@ def after_login(value=False):
 
 def peek_after():
     return _state["after"]
+
+
+def want_join(walk_id):
+    """A visitor pressed Join on a public walk page: once they've signed up and the walk page opens, it carries on
+    with the join (pledge, the hello to the host, then join_walk)."""
+    _state["join"] = walk_id
+
+
+def take_join(walk_id):
+    """True (once) when this walk's page should carry on with a Join pressed before signing in."""
+    if walk_id and _state["join"] == walk_id:
+        _state["join"] = None
+        return True
+    return False
+
+
+def browser_tz(d=None):
+    """{'name': 'America/Toronto', 'offset': -300}: this browser's time zone at the wall-clock moment d (a datetime from
+    a DatePicker), or now. Walks store it so emails and link previews can show the walk's local time."""
+    import json
+    try:
+        if d is not None:
+            raw = window.cc.tz(d.year, d.month, d.day, d.hour, d.minute)
+        else:
+            raw = window.cc.tz(0, 0, 0, 0, 0)
+        return json.loads(str(raw))
+    except Exception:
+        return {}
 
 
 def ask_login(mode="login"):

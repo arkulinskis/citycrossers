@@ -9,7 +9,7 @@ import anvil.tz
 import anvil.tables as tables
 from anvil.tables import app_tables
 
-from .common import now, route_stats, AVATAR_COLORS
+from .common import now, aware, route_stats, set_col, AVATAR_COLORS
 
 PLACES = [
   # name, kind, lat, lng, description
@@ -100,6 +100,23 @@ def ensure_seeded():
       app_tables.perks.add_row(name=name, emoji=emoji, description=desc, cost=cost, active=True, sort=i)
     if len(app_tables.places.search()) == 0:
       seed_demo()
+  refresh_demo_dates()
+
+
+def refresh_demo_dates():
+  """Demo walks are dated from the day they were loaded, so a week or two later every one of them has gone by and
+  Discover, the map and the walk pages look empty. Move upcoming demo walks that slipped into the past forward by
+  whole weeks (same weekday and time). Real walks are never touched."""
+  t = now()
+  moved = 0
+  for w in app_tables.walks.search(is_demo=True, status='planning'):
+    start = aware(w['start'])
+    if start is None or start > t:
+      continue
+    weeks = (t - start).days // 7 + 1
+    w.update(start=start + timedelta(days=7 * weeks), updated=t)
+    moved += 1
+  return moved
 
 
 def seed_demo(force=False):
@@ -187,8 +204,10 @@ def seed_demo(force=False):
     km, minutes, _b, _bm = route_stats(pts, spec['pace'])
     w.update(distance_km=km, duration_min=minutes, lat=pts[0]['lat'], lng=pts[0]['lng'])
     app_tables.walk_members.add_row(walk=w, user=host, status='going', role='host', created=t, updated=t)
-    for name in spec['going']:
-      app_tables.walk_members.add_row(walk=w, user=users[name], status='going', role='walker', created=t, updated=t)
+    for j, name in enumerate(spec['going']):
+      m = app_tables.walk_members.add_row(walk=w, user=users[name], status='going', role='walker', created=t, updated=t)
+      if j < 2 and not spec.get('completed'):
+        set_col(m, 'confirmed_at', t)  # a couple of "✓ confirmed" walkers, so the host's view shows the show-up kit
     if spec['title'] == "Canal Crawl: Little Venice → Limehouse":
       app_tables.stops.add_row(walk=w, place=places["Frosty Pause"], name="Frosty Pause", kind='treat',
                                lat=places["Frosty Pause"]['lat'], lng=places["Frosty Pause"]['lng'], position=999,
@@ -235,14 +254,31 @@ def seed_demo(force=False):
   return f"Loaded {len(PLACES)} places, {len(USERS)} demo walkers and {len(walks)} walks."
 
 
+def _has_repeat():
+  try:
+    len(app_tables.walks.search(repeat_of=None))
+    return True
+  except Exception:
+    return False
+
+
 def clear_demo():
   demo_users = list(app_tables.users.search(is_demo=True))
   demo_walks = list(app_tables.walks.search(is_demo=True))
   demo_places = list(app_tables.places.search(is_demo=True))
+  try:
+    invites = app_tables.email_invites
+  except Exception:
+    invites = None
   for w in demo_walks:
     for tbl in (app_tables.stops, app_tables.walk_members, app_tables.messages):
       for r in tbl.search(walk=w):
         r.delete()
+    if invites is not None:
+      for r in invites.search(walk=w):
+        r.delete()
+    for r in app_tables.walks.search(repeat_of=w) if _has_repeat() else []:
+      r['repeat_of'] = None
     for tbl in (app_tables.notifications, app_tables.reviews, app_tables.journal, app_tables.reports):
       for r in tbl.search(walk=w):
         r['walk'] = None

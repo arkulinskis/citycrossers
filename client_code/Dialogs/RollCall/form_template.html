@@ -1,0 +1,12 @@
+<div class="cc-dlg">
+  <h2 class="cc-modal-title">🏁 Roll call</h2>
+  <p class="cc-modal-sub">Everyone is ticked as here. Tap anyone who didn't make it: they get no points this time and aren't counted as met. Everyone else gets their points and the prompt to review stops.</p>
+  <div class="cc-rollcall">
+    <anvil-component type="RepeatingPanel" name="crew_panel" prop:item_template="CityCrossers.Items.PersonRow"></anvil-component>
+  </div>
+  <p class="small cc-rollcall-count" anvil:dom-node="count" role="status"></p>
+  <div class="cc-row end dlg-acts">
+    <anvil-component type="Button" name="no_button" prop:text="Cancel" prop:role='["cc-btn", "ghost"]'></anvil-component>
+    <anvil-component type="Button" name="yes_button" prop:text="🏁 Complete the walk" prop:role='["cc-btn"]'></anvil-component>
+  </div>
+</div>

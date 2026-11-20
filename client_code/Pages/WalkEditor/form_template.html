@@ -1,7 +1,7 @@
 <anvil-form layout="CityCrossers.Layouts.Shell">
   <anvil-block slot="content">
     <div class="cc-page">
-      <div class="cc-empty" anvil:name="denied_box"><span class="big" aria-hidden="true">🙈</span><h3>Can't edit this walk</h3><p class="muted">Only the host can change the plan.</p></div>
+      <div class="cc-empty" anvil:name="denied_box"><span class="big" aria-hidden="true">🙈</span><h3 anvil:dom-node="denied_h">Can't edit this walk</h3><p class="muted" anvil:dom-node="denied_p">Only the host can change the plan.</p></div>
       <div anvil:name="editor">
         <div class="cc-page-head">
           <h1 class="cc-h1" anvil:dom-node="h1"></h1>
@@ -44,6 +44,9 @@
                 <anvil-component type="RepeatingPanel" name="vis_panel" prop:item_template="CityCrossers.Items.Option" prop:role='["contents"]'></anvil-component>
               </div>
               <div class="cc-mt"><anvil-component type="CheckBox" name="approval_box" prop:text="🙋 I approve requests before people join (recommended)" prop:checked="true"></anvil-component></div>
+              <div class="cc-alert cc-crew-again" anvil:name="crew_part"><span class="ico" aria-hidden="true">🔁</span>
+                <span class="cc-grow"><anvil-component type="CheckBox" name="crew_box" prop:checked="true"></anvil-component>
+                <span class="small muted cc-block">They get an invite with their spot saved, and can say yes in one tap.</span></span></div>
               <div class="cc-field cc-mt"><span class="cc-label">💌 Invite connections</span>
                 <anvil-component type="CityCrossers.Components.Chips" name="invite_chips"></anvil-component>
                 <p class="small muted cc-m0" anvil:name="no_friends">No connections yet. Open the walk to the public, or find walkers on the <a href="#people">People</a> page. You can also invite by email after creating it.</p>

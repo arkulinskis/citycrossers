@@ -9,13 +9,14 @@ from ... import dialogs, router, state, ui
 TAGLINES = ["Ready for a long one?", "Somewhere out there is a cinnamon bun with your name on it.",
             "Every 5 km deserves a snack.", "Your next crew is one swipe away.",
             "Walk far, eat well, meet people."]
-EMPTY = {'deck': [], 'upcoming': [], 'invites': [], 'suggestions': [], 'counts': {}}
+EMPTY = {'deck': [], 'upcoming': [], 'invites': [], 'suggestions': [], 'counts': {}, 'to_confirm': []}
 
 
 class Discover(DiscoverTemplate):
     """#discover, home for members: a hello band with my numbers, nudges (invites, friend requests, the safety
     pledge, an unfinished profile), then two tabs. "Walks for you" = the swipe deck (cc.js drags the card; right =
-    join_walk, left = pass_walk) next to my invites and coming-up walks; "Walkers to meet" = suggested people."""
+    join_walk, left = pass_walk) next to my invites and coming-up walks; "Walkers to meet" = suggested people.
+    "Sunday's walk: still in?" (home_feed.to_confirm) asks people going on a walk within 48 hours to confirm."""
 
     def __init__(self, **properties):
         super().__init__(**properties)
@@ -59,6 +60,7 @@ class Discover(DiscoverTemplate):
         inv = len(self.data["invites"])
         self.invite_alert.visible = bool(inv)
         state.text(d["invite_text"], "You have %d walk invite%s." % (inv, "s" if inv != 1 else ""))
+        self.render_confirm()
         fr = (self.data.get("counts") or {}).get("friend_requests", 0)
         self.friend_alert.visible = bool(fr)
         state.text(d["friend_text"], "%d walker%s want%s to connect." % (fr, "s" if fr != 1 else "", "s" if fr == 1 else ""))
@@ -78,6 +80,43 @@ class Discover(DiscoverTemplate):
             self.people_panel.items = [{"p": p, "mode": "suggest"} for p in people]
             self.people_panel.visible = bool(people)
             self.people_empty.visible = not people
+
+    def render_confirm(self):
+        todo = self.data.get("to_confirm") or []
+        self.confirm_alert.visible = bool(todo)
+        if not todo:
+            return
+        w, d = todo[0], self.dom_nodes
+        state.text(d["confirm_title"], "%s's walk: still in?" % ui.day_word(w["start"]))
+        more = len(todo) - 1
+        state.text(d["confirm_sub"], "“%s” starts at %s.%s" % (w["title"], ui.fmt_time(w["start"]),
+                                                               " (+%d more to confirm)" % more if more else ""))
+
+    def _confirm(self, coming):
+        todo = self.data.get("to_confirm") or []
+        if not todo:
+            return
+        w = todo[0]
+        if not coming and not state.ask("Free your spot on “%s”? The next person on the waitlist gets it." % w["title"],
+                                        yes="Yes, free my spot"):
+            return
+        res = state.call("confirm_spot", w["id"], coming)
+        if res is state.FAIL:
+            return
+        state.toast("Brilliant, see you there 🥾" if coming else "Thanks for letting them know. Your spot is free.",
+                    "ok" if coming else "info")
+        self.data["to_confirm"] = todo[1:]
+        if not coming:
+            self.data["upcoming"] = [x for x in self.data["upcoming"] if x["id"] != w["id"]]
+        self.render()
+
+    @handle("confirm_yes_button", "click")
+    def confirm_yes_button_click(self, **event_args):
+        self._confirm(True)
+
+    @handle("confirm_no_button", "click")
+    def confirm_no_button_click(self, **event_args):
+        self._confirm(False)
 
     def _tab(self, key='walks', **event_args):
         self.tab = key

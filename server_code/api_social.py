@@ -5,7 +5,7 @@ import anvil.tables.query as q
 from anvil.tables import app_tables
 
 from .common import (current_user, rid, by_id, now, aware, user_card, notify, award, are_friends,
-                     friendship_between, friends_of, co_walker_ids, match_score, ENDORSE_SKILLS)
+                     friendship_between, friends_of, co_walker_ids, match_score, show_up, ENDORSE_SKILLS)
 from .serial import walk_summary
 
 
@@ -167,6 +167,8 @@ def badges_for(user):
     if w is not None and w['status'] == 'completed':
       longest = max(longest, w['distance_km'] or 0)
   km = user['km_total'] or 0
+  su = show_up(user)
+  reliable = su['came'] >= 5 and su['missed'] <= 1
   defs = [
     ("👣", "First steps", "Finish your first walk", (user['walks_count'] or 0) >= 1),
     ("🏃", "Half-marathoner", "One walk of 21 km or more", longest >= 21),
@@ -176,6 +178,7 @@ def badges_for(user):
     ("🎪", "Host with the most", "Host 3 completed walks", hosted >= 3),
     ("📔", "Storyteller", "Write 5 journal entries", entries >= 5),
     ("🛟", "Safety first", "Take the safety pledge", bool(user['safety_pledge'])),
+    ("🎯", "Reliable walker", "Turn up to 5 walks you signed up for, missing at most one", reliable),
   ]
   return [{'emoji': e, 'name': n, 'how': h, 'earned': bool(ok)} for e, n, h, ok in defs]
 

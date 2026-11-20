@@ -1,0 +1,104 @@
+<anvil-form layout="CityCrossers.Layouts.Shell">
+  <anvil-block slot="content">
+    <div class="wp-root">
+      <div class="lp-wrap">
+        <nav class="lp-nav wp-nav" aria-label="CityCrossers">
+          <a class="cc-logo" href="#landing"><img class="cc-logo-img" src="_/theme/logo.svg" alt=""><span>City<b>Crossers</b></span></a>
+          <div class="cc-row wp-auth">
+            <anvil-component type="Button" name="login_button" prop:text="Log in" prop:role='["cc-btn", "ghost", "sm"]'></anvil-component>
+            <anvil-component type="Button" name="join_top_button" prop:text="Join free" prop:role='["cc-btn", "sm"]'></anvil-component>
+          </div>
+        </nav>
+      </div>
+      <div class="cc-page wp-page">
+        <div class="cc-empty wp-loading" anvil:name="loading_box" role="status"><span class="big" aria-hidden="true">🥾</span><h3>Lacing up…</h3>
+          <p class="muted">Loading the walk.</p></div>
+
+        <div class="cc-empty" anvil:name="missing_box">
+          <span class="big" aria-hidden="true" anvil:dom-node="missing_emoji">🔒</span>
+          <h1 class="cc-empty-h" anvil:dom-node="missing_title">We can't show this walk</h1>
+          <p class="muted" anvil:dom-node="missing_text"></p>
+          <div class="cc-row cc-center-row">
+            <anvil-component type="Button" name="find_button" prop:text="Find open walks" prop:role='["cc-btn"]'></anvil-component>
+            <anvil-component type="Button" name="missing_login_button" prop:text="Log in" prop:role='["cc-btn", "ghost"]'></anvil-component>
+            <anvil-component type="Button" name="retry_button" prop:text="Try again" prop:role='["cc-btn", "ghost"]'></anvil-component>
+          </div>
+        </div>
+
+        <div anvil:name="walk_box">
+          <div class="cc-walk-hero cc-fade-in" anvil:dom-node="hero">
+            <span class="emo" anvil:dom-node="emo" aria-hidden="true"></span>
+            <div class="cc-pills cc-hero-pills">
+              <span class="cc-pill" anvil:dom-node="p_vibe"></span><span class="cc-pill sky">🌍 Public walk</span>
+              <span class="cc-pill dark" anvil:dom-node="p_series"></span><span class="cc-pill dark" anvil:dom-node="p_status"></span>
+            </div>
+            <h1 anvil:dom-node="title"></h1>
+            <div class="facts">
+              <span class="cc-pill" anvil:dom-node="f_date"></span><span class="cc-pill" anvil:dom-node="f_time"></span>
+              <span class="cc-pill" anvil:dom-node="f_dist"></span><span class="cc-pill" anvil:dom-node="f_dur"></span>
+              <span class="cc-pill" anvil:dom-node="f_pace"></span><span class="cc-pill" anvil:dom-node="f_food"></span>
+            </div>
+            <p class="wp-tz small">Times are shown in your time zone.</p>
+          </div>
+
+          <div class="cc-actionbar wp-joinbar">
+            <div class="wp-spots">
+              <b anvil:dom-node="spots_text"></b>
+              <div class="cc-progress wp-spots-bar" role="progressbar" aria-label="Spots taken" anvil:dom-node="bar_box"><div anvil:dom-node="bar"></div></div>
+              <span class="small muted" anvil:dom-node="join_note"></span>
+            </div>
+            <span class="cc-spacer"></span>
+            <anvil-component type="Button" name="join_button" prop:text="💚 Join this walk" prop:role='["cc-btn", "lg"]'></anvil-component>
+          </div>
+
+          <div class="cc-grid two cc-detail-grid">
+            <div class="cc-stack">
+              <div class="cc-card">
+                <div class="cc-card-title"><h2 class="cc-card-h">🗺️ Route &amp; stops</h2><span class="small muted" anvil:dom-node="stops_count"></span></div>
+                <div class="cc-map-wrap cc-mb"><anvil-component type="CityCrossers.Components.MapView" name="map_view"></anvil-component></div>
+                <div class="cc-timeline">
+                  <anvil-component type="RepeatingPanel" name="timeline_panel" prop:item_template="CityCrossers.Items.TimelineStop"></anvil-component>
+                </div>
+                <p class="small muted cc-tl-end" anvil:dom-node="tl_end"></p>
+              </div>
+              <div class="cc-card">
+                <h2 class="cc-card-h">📝 About this walk</h2>
+                <p class="cc-prewrap" anvil:dom-node="desc"></p>
+                <div class="cc-pills">
+                  <anvil-component type="RepeatingPanel" name="tags_panel" prop:item_template="CityCrossers.Items.Pill" prop:role='["contents"]'></anvil-component>
+                </div>
+                <p class="small muted cc-mt">🔒 The exact meeting spot, the crew and the group chat open once you're in.</p>
+              </div>
+            </div>
+
+            <div class="cc-stack">
+              <div class="cc-card" anvil:name="host_card">
+                <div class="small muted cc-hosted-by">Hosted by</div>
+                <anvil-component type="CityCrossers.Components.Person" name="host"></anvil-component>
+                <div class="cc-pills cc-mt-sm">
+                  <span class="cc-pill sun" anvil:dom-node="h_level"></span><span class="cc-pill" anvil:dom-node="h_walks"></span>
+                </div>
+              </div>
+              <div class="cc-card tint-green">
+                <h2 class="cc-card-h">🥐 How CityCrossers walks work</h2>
+                <ul class="cc-safety-list small">
+                  <li><span class="i" aria-hidden="true">🛟</span><span>Public walks are groups of 3 or more, everyone takes a short safety pledge, and hosts approve who joins.</span></li>
+                  <li><span class="i" aria-hidden="true">☕</span><span>A break at least every 5 km. The group regroups at every stop, so nobody gets left behind.</span></li>
+                  <li><span class="i" aria-hidden="true">💬</span><span>Shy? Every stop comes with an easy conversation topic, like the ones on this route.</span></li>
+                  <li><span class="i" aria-hidden="true">💸</span><span>Free. You pay only for your own snacks.</span></li>
+                </ul>
+                <anvil-component type="Button" name="join2_button" prop:text="💚 Join this walk" prop:role='["cc-btn", "block"]'></anvil-component>
+                <p class="small muted cc-mt-sm"><a href="#safety">Safety center →</a></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <footer class="lp-footer cc-safety-foot">
+          <div><a href="https://prepsto.com/#f/wzrzr2f" target="_blank" rel="noopener" data-prepsto-open>Submit feedback</a> · <button type="button" class="cc-footer-link" data-lk-open="overview">Privacy &amp; Terms</button></div>
+          <div class="lp-org">Contact developer: <a href="https://arkvital.com" target="_blank" rel="noopener">arkvital.com</a> · Parent company: <a href="https://addanapp.com" target="_blank" rel="noopener">addanapp.com</a></div>
+        </footer>
+      </div>
+    </div>
+  </anvil-block>
+</anvil-form>

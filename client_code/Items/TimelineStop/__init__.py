@@ -6,8 +6,9 @@ from ... import state, ui
 
 class TimelineStop(TimelineStopTemplate):
     """A stop in a walk's timeline: the walk there (km, minutes), the stop's kind, arrival time, km in, break,
-    partner deal and rating; a stop that is a map place opens it (x-place(pid=...)).
-    item = {stop, leg (km or None), leg_min, eta, km_in}."""
+    partner deal and rating; a stop that is a map place opens it (x-place(pid=...)); and its conversation topic
+    (ui.topic_for: the same on every device, 🔀 shows another one).
+    item = {stop, leg (km or None), leg_min, eta, km_in, walk_id?, i? (no walk_id = no topic), link? (False = no place link)}."""
 
     def __init__(self, **properties):
         super().__init__(**properties)
@@ -19,7 +20,7 @@ class TimelineStop(TimelineStopTemplate):
         emo, kname = ui.kind(s.get("kind"))
         d["bubble"].className = "bubble " + (s.get("kind") or "")
         state.text(d["bubble"], emo)
-        linked = bool(s.get("place_id"))
+        linked = bool(s.get("place_id")) and it.get("link", True)
         state.text(d["link"], s.get("name"))
         state.text(d["name"], s.get("name"))
         state.show(d["link"], linked)
@@ -37,6 +38,18 @@ class TimelineStop(TimelineStopTemplate):
         state.show(d["brk"], bool(brk))
         state.text(d["note"], s.get("note"))
         state.show(d["note"], bool(s.get("note")))
+        self._turns = 0
+        state.show(d["topic_row"], bool(it.get("walk_id")))
+        self._topic()
+
+    def _topic(self):
+        it = self.item
+        if it.get("walk_id"):
+            state.text(self.dom_nodes["topic"], ui.topic_for(it["walk_id"], it.get("i", 0), it["stop"].get("kind"), self._turns))
+
+    def shuffle_click(self, event):
+        self._turns += 1
+        self._topic()
 
     def place_click(self, event):
         event.preventDefault()

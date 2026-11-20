@@ -81,6 +81,14 @@
 
   <div class="lp-marquee"><div class="track"><span>Pastry pilgrimages <i>✺</i></span><span>Sunrise strides <i>✺</i></span><span>Canal crawls <i>✺</i></span><span>Bridge-to-bridge <i>✺</i></span><span>Market Saturdays <i>✺</i></span><span>Park hoppers <i>✺</i></span><span>Night walks <i>✺</i></span><span>Coast-to-coast (of the city) <i>✺</i></span><span>History hunts <i>✺</i></span><span>Gelato detours <i>✺</i></span><span>Pastry pilgrimages <i>✺</i></span><span>Sunrise strides <i>✺</i></span><span>Canal crawls <i>✺</i></span><span>Bridge-to-bridge <i>✺</i></span><span>Market Saturdays <i>✺</i></span><span>Park hoppers <i>✺</i></span><span>Night walks <i>✺</i></span><span>Coast-to-coast (of the city) <i>✺</i></span><span>History hunts <i>✺</i></span><span>Gelato detours <i>✺</i></span></div></div>
 
+  <section class="lp-section lp-open" anvil:name="open_box" aria-labelledby="open-walks-h">
+    <div class="lp-wrap">
+      <h2 id="open-walks-h">Open walks this week</h2>
+      <p class="intro">Real walks with spots left. Tap one to see the route and stops, no account needed.</p>
+      <anvil-component type="RepeatingPanel" name="open_panel" prop:item_template="CityCrossers.Items.WalkRow" prop:role='["lp-open-grid"]'></anvil-component>
+    </div>
+  </section>
+
   <section class="lp-section ytf" id="watch">
     <div class="lp-wrap"><div class="ytf-in">
       <div class="ytf-copy">

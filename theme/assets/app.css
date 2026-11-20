@@ -1065,6 +1065,50 @@ a.cc-walk-card:hover { color: inherit; }
 :is(.modal-header, .anvil-modal-header) :is(.close, .anvil-close) { color: var(--muted); opacity: 1; text-shadow: none; }
 @media (max-width: 600px) { :is(.modal-dialog, .anvil-modal-dialog) { margin: 10px !important; } :is(.modal-body, .anvil-modal-body) { padding: 18px !important; } }
 
+/* public walk page (Pages/WalkPublic): its own top bar, the join bar with spots left */
+.wp-root { min-height: 100vh; }
+.wp-nav { justify-content: space-between; }
+.wp-auth { flex-wrap: nowrap; gap: 8px; }
+.wp-page { padding-top: 8px; }
+.wp-tz { color: var(--ink-2); margin: 10px 0 0; position: relative; }
+.grad-night .wp-tz { color: rgba(255, 255, 255, .85); }
+.wp-joinbar { gap: 14px; }
+.wp-spots { display: grid; gap: 6px; min-width: 0; flex: 1 1 220px; }
+.wp-spots-bar { height: 10px; max-width: 320px; }
+.wp-loading .big { animation: kit-in var(--dur-slow) var(--ease-out) both; }
+.cc-empty-h { font-size: 1.35rem; margin: 4px 0 6px; }
+@media (max-width: 600px) { .wp-joinbar .anvil-role-cc-btn { width: 100%; } .wp-joinbar .anvil-role-cc-btn > button { width: 100%; } }
+
+/* stop topics: a conversation card under each stop on the timeline */
+.tl-topic { align-items: center; background: var(--bg-2); border-radius: 12px; display: flex; gap: 6px; margin-top: 6px;
+  padding: 4px 4px 4px 10px; }
+.tl-topic-q { color: var(--ink-2); flex: 1; font-size: 13px; font-style: italic; min-width: 0; }
+.tl-shuffle { background: transparent; border: 0; border-radius: 999px; cursor: pointer; flex-shrink: 0; font-size: 15px;
+  height: 32px; width: 32px; transition: background-color var(--dur-press) var(--ease-out), transform var(--dur-press) var(--ease-out); }
+.tl-shuffle:hover { background: var(--line); }
+.tl-shuffle:active { transform: scale(.92); }
+.tl-shuffle:focus-visible { outline: 2px solid var(--green-d); outline-offset: 2px; }
+
+/* show-up kit: "still in?", the host's confirmed count, the calendar choices, the roll call */
+.cc-confirm { margin: 14px 18px 0; flex-wrap: wrap; }
+.cc-confirm-acts { flex-wrap: nowrap; gap: 8px; }
+@media (max-width: 600px) { .cc-confirm { margin-left: 0; margin-right: 0; } .cc-confirm-acts { flex-wrap: wrap; } }
+.cc-confirmed { color: var(--green-d); font-weight: 700; margin: 0 0 10px; }
+.cc-cal-opts { display: grid; gap: 6px; }
+.cc-cal-hint { margin: 0 0 8px 4px; }
+.cc-rollcall { max-height: 52vh; overflow-y: auto; position: relative; }
+.cc-rollcall-count { color: var(--ink-2); font-weight: 700; margin: 10px 0 0; }
+.cc-crew-again { margin-top: 12px; }
+.cc-block { display: block; }
+
+/* landing: open walks this week */
+.lp-open { padding-top: 60px; }
+.anvil-role-lp-open-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); margin-top: 18px; }
+.anvil-role-lp-open-grid > div { min-width: 0; }
+.anvil-role-lp-open-grid .cc-walk-row { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  box-shadow: var(--shadow-sm); padding: 14px; transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out); }
+@media (hover: hover) and (pointer: fine) { .anvil-role-lp-open-grid .cc-walk-row:hover { box-shadow: var(--shadow); transform: translateY(-2px); } }
+
 /* reduced motion: the marquee, the bobbing cards, the marching route and the confetti stop */
 @media (prefers-reduced-motion: reduce) {
   .lp-marquee .track, .lp-float, .lp-route, .cc-fade-in, .cc-confetti span { animation: none; }

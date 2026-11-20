@@ -1,5 +1,3 @@
-import datetime
-
 import anvil
 import anvil.server
 from anvil import *
@@ -14,7 +12,11 @@ class WalkDetail(WalkDetailTemplate):
     edit / invite / open up / share / cancel / complete; walker: join, request, waitlist, leave, accept an invite),
     the route map + timeline with arrival times, suggested stops (vote, host adds), about + meeting spot, the group
     chat (people going), host, crew (+ requests and waitlist for the host), walk-day weather and safety tips. After a
-    completed walk: rate the stops, endorse the crew, write a journey entry."""
+    completed walk: rate the stops, endorse the crew, write a journey entry.
+    Show-up kit: "still in?" 48 h before (confirm_spot), Add to calendar (Dialogs/AddCalendar), the host's ✓ confirmed
+    count and "Came to N of M walks" on requests, and the roll call (Dialogs/RollCall) when completing.
+    Host again: 🔁 opens #plan/again/<id>; walkers who went get 🗺️ "Walk this route again". Every stop shows a
+    conversation topic (ui.topic_for). A visitor who pressed Join on the public page carries on joining here."""
 
     def __init__(self, walk_id=None, **properties):
         super().__init__(**properties)
@@ -50,6 +52,18 @@ class WalkDetail(WalkDetailTemplate):
         w = self.w
         if w and self.forecast is None and not w['is_past'] and w['status'] in ('planning', 'confirmed'):
             window.setTimeout(self._load_forecast, 200)
+        if w and state.take_join(self.walk_id):
+            window.setTimeout(self._continue_join, 350)
+
+    def _continue_join(self):
+        """Join pressed on the public walk page before signing up: carry on now that they're signed in."""
+        st = self.w['my_status']
+        if st == 'invited':
+            self._respond(True)
+        elif st in ('going', 'requested', 'waitlist') or self.w['is_host']:
+            state.toast("You're already on this walk 🎉" if st == 'going' or self.w['is_host'] else "Your request is in 🙋")
+        elif self.join_button.visible:
+            self.join_button_click()
 
     def _load_forecast(self):
         f = state.call('walk_forecast', self.walk_id, quiet=True)
@@ -67,6 +81,9 @@ class WalkDetail(WalkDetailTemplate):
         public = w['visibility'] == 'public'
         d['p_vis'].className = 'cc-pill ' + ('sky' if public else 'berry')
         state.text(d['p_vis'], '🌍 Public' if public else '👯 Friends only')
+        ed = w.get('edition') or 1
+        state.text(d['p_series'], '🔁 Weekly walk · edition %d' % ed if ed > 1 else '')
+        state.show(d['p_series'], ed > 1)
         status = {'completed': '🏁 Completed', 'cancelled': 'Cancelled'}.get(w['status'], '')
         state.text(d['p_status'], status)
         state.show(d['p_status'], bool(status))
@@ -80,6 +97,7 @@ class WalkDetail(WalkDetailTemplate):
         state.text(d['f_pace'], '%s %s pace' % (pace[0], pace[1]))
         state.text(d['f_going'], '👥 %s/%s going' % (w['going'], w['max_walkers']))
         self.render_actions()
+        self.render_confirm()
         self.render_post()
         self.render_route()
         self.render_proposed()
@@ -99,20 +117,32 @@ class WalkDetail(WalkDetailTemplate):
             text = 'This walk was cancelled by the host. 😢'
         elif w['status'] == 'completed':
             text = '🏁 This walk is in the books.'
+            if w['is_host']:
+                show.add('again')
             if st == 'going':
                 show.add('journal')
+                if not w['is_host']:
+                    show.add('route')
+            elif st == 'no_show':
+                text = "🏁 This walk is in the books. The host's roll call says you missed this one."
         elif w['is_host'] or (w['is_admin'] and not st):
             text = "⭐ You're hosting"
             req = len(w['members']['requested'])
             if req:
                 req_text = ' · %d request%s waiting' % (req, 's' if req != 1 else '')
             show.update(['edit', 'invite', 'share', 'cancel', 'friends' if public_of(w) else 'public'])
+            if w['is_host']:
+                show.update(['again', 'calendar'])
             if w['is_past']:
                 show.add('complete')
+                show.discard('calendar')
             self.invite_button.text = '💌 Invite'
         elif st == 'going':
-            text = "✅ You're going! See you at the start."
+            text = ("✅ You're going, and you've confirmed. See you at the start!" if w.get('my_confirmed')
+                    else "✅ You're going! See you at the start.")
             show.update(['invite', 'share', 'leave'])
+            if not w['is_past']:
+                show.add('calendar')
             self.invite_button.text = '💌 Bring a friend'
             self.leave_button.text = 'Can’t make it'
             self.leave_button.role = ['cc-btn', 'danger', 'sm']
@@ -145,9 +175,20 @@ class WalkDetail(WalkDetailTemplate):
         state.text(d['state_text'], text)
         state.text(d['req_text'], req_text)
         state.show(d['req_text'], bool(req_text))
-        for key in ('journal', 'complete', 'edit', 'invite', 'public', 'friends', 'share', 'cancel', 'leave', 'decline',
-                    'accept', 'join'):
+        for key in ('journal', 'complete', 'again', 'route', 'edit', 'invite', 'public', 'friends', 'share', 'calendar',
+                    'cancel', 'leave', 'decline', 'accept', 'join'):
             getattr(self, key + '_button').visible = key in show
+
+    def render_confirm(self):
+        """"Sunday's walk: still in?" for someone going, from 48 hours before the start until they answer."""
+        w, d = self.w, self.dom_nodes
+        on = bool(w.get('confirm_needed'))
+        self.confirm_box.visible = on
+        if on:
+            state.text(d['confirm_title'], "%s's walk: still in?" % ui.day_word(w['start']))
+            first = (w.get('host') or {}).get('name', 'The host').split(' ')[0]
+            state.text(d['confirm_sub'], "It starts at %s. %s will see your answer, and if you can't make it, your spot "
+                                         "goes to the next person waiting." % (ui.fmt_time(w['start']), first))
 
     def render_post(self):
         w = self.w
@@ -168,25 +209,9 @@ class WalkDetail(WalkDetailTemplate):
         stops = w['stops_full']
         state.text(d['stops_count'], '%d stops · %s food' % (len(stops), w['food_stops']))
         self.no_stops.visible = not stops
-        rows, end = [], ''
-        if stops:
-            stats = ui.route_stats(stops, w['pace'])
-            t = ui.local(w['start'])
-            walked = 0.0
-            for i, s in enumerate(stops):
-                leg = mins = None
-                if i > 0:
-                    leg = stats['legs'][i - 1]
-                    walked += leg
-                    mins = leg / stats['speed'] * 60
-                    t = t + datetime.timedelta(minutes=mins) if t else None
-                rows.append({'stop': s, 'leg': leg, 'leg_min': mins, 'eta': ui.fmt_time(t) if t else '',
-                             'km_in': walked if i else None})
-                if t:
-                    t = t + datetime.timedelta(minutes=s['break_min'])
-            if t:
-                end = '🏁 Back around %s · %d breaks totalling %s · distances are approximate' % (
-                    ui.fmt_time(t), stats['breaks'], ui.fmt_dur(stats['break_min']))
+        rows, end = ui.timeline(stops, w['pace'], w['start'])
+        for i, r in enumerate(rows):
+            r.update({'walk_id': w['id'], 'i': i})  # the stop's conversation topic
         self.timeline_panel.items = rows
         state.text(d['tl_end'], end)
         state.show(d['tl_end'], bool(end))
@@ -251,17 +276,23 @@ class WalkDetail(WalkDetailTemplate):
         pct = min(100, int(100.0 * len(going) / max(1, w['max_walkers'])))
         d['crew_bar'].style.width = '%d%%' % pct
         d['crew_bar_box'].setAttribute('aria-valuenow', str(pct))
-        self.going_panel.items = [{'card': c, 'sub': '⭐ Host' if c.get('role') == 'host' else (c.get('headline') or '')}
-                                  for c in going]
+        self.going_panel.items = [{'card': c, 'sub': '⭐ Host' if c.get('role') == 'host' else
+                                   ('✓ Confirmed' if c.get('confirmed') else (c.get('headline') or ''))} for c in going]
+        cc = w.get('crew_confirmed')
+        on = bool(cc and cc['walkers'] and w['status'] in ('planning', 'confirmed') and not w['is_past'])
+        state.text(d['confirmed_text'], '✓ %d of %d confirmed · walkers get a “still in?” check 48 h before'
+                   % (cc['confirmed'], cc['walkers']) if on else '')
+        state.show(d['confirmed_text'], on)
         self.nobody.visible = not going
         reqs = m['requested']
         self.requests_part.visible = bool(reqs)
         self.requests_panel.items = [{'card': c, 'divider': True, 'note': c.get('message'), 'profile': True,
+                                      'sub': show_up_text(c),
                                       'under': [('✓ Accept', 'approve', ['cc-btn', 'sm']),
                                                 ('Decline', 'reject', ['cc-btn', 'ghost', 'sm'])]} for c in reqs]
         wl = m['waitlist']
         self.waitlist_part.visible = bool(wl)
-        self.waitlist_panel.items = [{'card': c, 'size': 34,
+        self.waitlist_panel.items = [{'card': c, 'size': 34, 'sub': show_up_text(c),
                                       'side': ('Let in', 'approve', ['cc-btn', 'soft', 'sm']) if w['is_host'] else None}
                                      for c in wl]
         n = len(m['invited'])
@@ -370,10 +401,18 @@ class WalkDetail(WalkDetailTemplate):
 
     @handle('complete_button', 'click')
     def complete_button_click(self, **event_args):
-        if not state.ask("Mark this walk as completed? Everyone going gets their points, and you all get prompted to review stops.",
-                         yes="🏁 Complete it"):
-            return
-        if state.call('complete_walk', self.walk_id) is not state.FAIL:
+        crew = [c for c in self.w['members']['going'] if c.get('role') != 'host']
+        if crew:
+            from ...Dialogs.RollCall import RollCall
+            absent = anvil.alert(RollCall(crew=crew), buttons=[], role='app-dialog', large=True)
+            if not isinstance(absent, list):
+                return
+        else:
+            absent = []
+            if not state.ask("Mark this walk as completed? You get your points, and the stops are ready to review.",
+                             yes="🏁 Complete it"):
+                return
+        if state.call('complete_walk', self.walk_id, absent) is not state.FAIL:
             state.confetti(['🏁', '🎉', '🥐', '⭐', '🥾'])
             state.toast("Walk complete! Points are on their way ⭐")
             state.refresh_me()
@@ -389,7 +428,7 @@ class WalkDetail(WalkDetailTemplate):
 
     def _share(self):
         w = self.w
-        url = anvil.server.get_app_origin() + '/#walk/' + w['id']
+        url = walk_link(w['id'])
         stops = ' → '.join(s['name'] for s in w['stops_full'])
         text = ("I'm going on a CityCrossers walk: “%s”\nWhen: %s (about %s)\nRoute (%s): %s\nGroup: %s people, hosted by %s\n%s"
                 % (w['title'], ui.fmt_when(w['start']), ui.fmt_dur(w['duration_min']), ui.km(w['distance_km']), stops,
@@ -491,6 +530,38 @@ class WalkDetail(WalkDetailTemplate):
     def journal2_button_click(self, **event_args):
         self._journal()
 
+    @handle('calendar_button', 'click')
+    def calendar_button_click(self, **event_args):
+        from ...Dialogs.AddCalendar import AddCalendar
+        anvil.alert(AddCalendar(walk=self.w, url=walk_link(self.walk_id)), buttons=[], role='app-dialog')
+
+    @handle('again_button', 'click')
+    def again_button_click(self, **event_args):
+        router.go('plan/again/%s' % self.walk_id)
+
+    @handle('route_button', 'click')
+    def route_button_click(self, **event_args):
+        router.go('plan/again/%s' % self.walk_id)
+
+    def _confirm(self, coming):
+        if not coming and not state.ask("Free your spot? The next person on the waitlist gets it, and the host is told.",
+                                        yes="Yes, free my spot"):
+            return
+        res = state.call('confirm_spot', self.walk_id, coming)
+        if res is state.FAIL:
+            return
+        state.toast("Brilliant, see you at the start 🥾" if coming else "Thanks for letting the group know. Your spot is free.",
+                    'ok' if coming else 'info')
+        self.load()
+
+    @handle('confirm_yes_button', 'click')
+    def confirm_yes_button_click(self, **event_args):
+        self._confirm(True)
+
+    @handle('confirm_no_button', 'click')
+    def confirm_no_button_click(self, **event_args):
+        self._confirm(False)
+
     @handle('report_button', 'click')
     def report_button_click(self, **event_args):
         dialogs.report(walk_id=self.walk_id, who='this walk')
@@ -501,3 +572,16 @@ class WalkDetail(WalkDetailTemplate):
 
 def public_of(w):
     return w.get('visibility') == 'public'
+
+
+def walk_link(walk_id):
+    """The walk's shareable address: /w/<id> shows a link card in chats and opens the walk (server walk_pages.py)."""
+    return anvil.server.get_app_origin().rstrip('/') + '/w/' + str(walk_id)
+
+
+def show_up_text(card):
+    """'🎯 Came to 9 of 10 walks' on a join request (the server sends it only after 3+ walks)."""
+    su = card.get('show_up')
+    if not su:
+        return None
+    return '🎯 Came to %d of %d walks' % (su['came'], su['total'])

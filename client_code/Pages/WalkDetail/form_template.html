@@ -9,7 +9,7 @@
           <span class="emo" anvil:dom-node="emo" aria-hidden="true"></span>
           <div class="cc-pills cc-hero-pills">
             <span class="cc-pill" anvil:dom-node="p_vibe"></span><span class="cc-pill" anvil:dom-node="p_vis"></span>
-            <span class="cc-pill dark" anvil:dom-node="p_status"></span><span class="cc-pill dark" anvil:dom-node="p_match"></span>
+            <span class="cc-pill dark" anvil:dom-node="p_series"></span><span class="cc-pill dark" anvil:dom-node="p_status"></span><span class="cc-pill dark" anvil:dom-node="p_match"></span>
           </div>
           <h1 anvil:dom-node="title"></h1>
           <div class="facts">
@@ -23,17 +23,28 @@
           <b class="cc-req-wait" anvil:dom-node="req_text"></b>
           <span class="cc-spacer"></span>
           <anvil-component type="Button" name="journal_button" prop:text="📔 Write about it" prop:role='["cc-btn", "sm"]'></anvil-component>
-          <anvil-component type="Button" name="complete_button" prop:text="🏁 Mark completed" prop:role='["cc-btn", "sm"]'></anvil-component>
+          <anvil-component type="Button" name="complete_button" prop:text="🏁 Roll call &amp; complete" prop:role='["cc-btn", "sm"]'></anvil-component>
+          <anvil-component type="Button" name="again_button" prop:text="🔁 Host again next week" prop:role='["cc-btn", "soft", "sm"]'></anvil-component>
+          <anvil-component type="Button" name="route_button" prop:text="🗺️ Walk this route again" prop:role='["cc-btn", "ghost", "sm"]'></anvil-component>
           <anvil-component type="Button" name="edit_button" prop:text="✏️ Edit" prop:role='["cc-btn", "ghost", "sm"]'></anvil-component>
           <anvil-component type="Button" name="invite_button" prop:text="💌 Invite" prop:role='["cc-btn", "orange", "sm"]'></anvil-component>
           <anvil-component type="Button" name="public_button" prop:text="🌍 Open to public" prop:role='["cc-btn", "ghost", "sm"]'></anvil-component>
           <anvil-component type="Button" name="friends_button" prop:text="👯 Make friends-only" prop:role='["cc-btn", "ghost", "sm"]'></anvil-component>
           <anvil-component type="Button" name="share_button" prop:text="📤 Share plan" prop:role='["cc-btn", "ghost", "sm"]'></anvil-component>
+          <anvil-component type="Button" name="calendar_button" prop:text="📅 Add to calendar" prop:role='["cc-btn", "ghost", "sm"]'></anvil-component>
           <anvil-component type="Button" name="cancel_button" prop:text="Cancel walk" prop:role='["cc-btn", "danger", "sm"]'></anvil-component>
           <anvil-component type="Button" name="leave_button" prop:text="Can’t make it" prop:role='["cc-btn", "danger", "sm"]'></anvil-component>
           <anvil-component type="Button" name="decline_button" prop:text="Can’t make it" prop:role='["cc-btn", "ghost", "sm"]'></anvil-component>
           <anvil-component type="Button" name="accept_button" prop:text="💚 I’m in!" prop:role='["cc-btn", "lg"]'></anvil-component>
           <anvil-component type="Button" name="join_button" prop:text="💚 Join this walk" prop:role='["cc-btn", "lg"]'></anvil-component>
+        </div>
+        <div class="cc-alert sky cc-confirm" anvil:name="confirm_box" role="group" aria-label="Still coming?">
+          <span class="ico" aria-hidden="true">🗓️</span>
+          <span class="cc-grow"><b anvil:dom-node="confirm_title"></b> <span anvil:dom-node="confirm_sub"></span></span>
+          <div class="cc-row cc-confirm-acts">
+            <anvil-component type="Button" name="confirm_yes_button" prop:text="Yes, see you there" prop:role='["cc-btn", "sm"]'></anvil-component>
+            <anvil-component type="Button" name="confirm_no_button" prop:text="Can’t make it" prop:role='["cc-btn", "ghost", "sm"]'></anvil-component>
+          </div>
         </div>
 
         <div class="cc-grid two cc-detail-grid">
@@ -108,6 +119,7 @@
             <div class="cc-card">
               <div class="cc-card-title"><h2 class="cc-card-h">👥 The crew</h2><span class="small muted" anvil:dom-node="crew_count"></span></div>
               <div class="cc-progress cc-mb-sm" role="progressbar" aria-label="Spots taken" anvil:dom-node="crew_bar_box"><div anvil:dom-node="crew_bar"></div></div>
+              <p class="small cc-confirmed" anvil:dom-node="confirmed_text"></p>
               <anvil-component type="RepeatingPanel" name="going_panel" prop:item_template="CityCrossers.Items.PersonRow"></anvil-component>
               <p class="muted small" anvil:name="nobody">Nobody yet.</p>
               <div anvil:name="requests_part"><h3 class="cc-sub-h cc-mt">🙋 Requests</h3>

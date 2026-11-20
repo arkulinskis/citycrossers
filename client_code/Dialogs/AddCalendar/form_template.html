@@ -1,0 +1,13 @@
+<div class="cc-dlg">
+  <h2 class="cc-modal-title">📅 Add it to your calendar</h2>
+  <p class="cc-modal-sub" anvil:dom-node="sub"></p>
+  <div class="cc-cal-opts">
+    <anvil-component type="Button" name="ics_button" prop:text="⬇️ Calendar file (.ics)" prop:role='["cc-btn", "block"]'></anvil-component>
+    <span class="small muted cc-cal-hint">Apple Calendar, Outlook and most phones. The file is made on your device.</span>
+    <anvil-component type="Link" name="google_link" prop:text="Google Calendar ↗" prop:role='["cc-btn", "ghost", "block"]'></anvil-component>
+    <span class="small muted cc-cal-hint">Opens Google Calendar with the walk filled in.</span>
+  </div>
+  <div class="cc-row end dlg-acts">
+    <anvil-component type="Button" name="close_button" prop:text="Close" prop:role='["cc-btn", "ghost"]'></anvil-component>
+  </div>
+</div>

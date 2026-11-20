@@ -43,7 +43,38 @@ server_code/ unchanged from the classic app: api_walks, api_social, api_me, api_
 theme/assets app.css (old theme.css + design kit + role layer), theme.css (spinner only), app-kit.js, cc.js (swipe, confetti, copy, Watch video)
 ```
 
-Addresses (unchanged): `#landing #discover #map #plan #plan/from/<place> #edit/<id> #walk/<id> #walks[/tab] #people #u/<id> #me #me/edit #welcome #journey #perks #admin #safety #notifications`.
+Addresses: `#landing #discover #map #plan #plan/from/<place> #plan/again/<id> #edit/<id> #walk/<id> #walks[/tab] #people #u/<id> #me #me/edit #welcome #journey #perks #admin #safety #notifications`.
+Visitors on `#walk/<id>` get Pages/WalkPublic (the public walk page); members get WalkDetail. Shared links are `/w/<id>`
+(server_code/walk_pages.py, an `anvil.server.route`): link-card tags + JSON-LD Event, then `location.replace('/#walk/<id>')`.
+
+## Features added 2026-11-20 (improvement round)
+
+- **Public walk pages:** `api_public.public_walk` (no require_user; public walks only; slim host = first name, initials,
+  colour, avatar, level, walks, verified; never meeting_note/members/chat/emails) and `public_walks(limit)` (Landing's
+  "Open walks this week", real walks only). Join on the public page: `state.want_join(id)` + `after_login` -> sign-up ->
+  WalkDetail `_continue_join` (invited -> accept, else the normal join flow with pledge + hello).
+- **invite_by_email (security fix):** host or going only (like invite_to_walk), upcoming walks only, 10 a day per walker
+  (`EMAIL_INVITES_PER_DAY`), one email per address per walk and 2 a day per address, the same answer whether or not the
+  address has an account. Table `email_invites` stores inviter, walk, created and a SHA-256 fingerprint of the address
+  (never the address); someone who signs up with that address gets the invite (`_claim_email_invite` in get_walk).
+  The email links to `/w/<id>` and shows the walk's local time.
+- **Walk time zones:** the editor sends `tz_name` + `tz_offset` (cc.tz: minutes east of UTC at the start). Server
+  helpers in common.py: `walk_tz`, `local_start`, `fmt_local` ('Sunday 7 December, 09:30 (Toronto time)'). Old walks
+  fall back to the inviter's browser time zone, then UTC.
+- **Show-up kit:** `walk_members.confirmed_at`; `confirm_spot(walk_id, coming)` (False = `_leave` -> waitlist promoted);
+  get_walk `confirm_needed` / `my_confirmed` / `crew_confirmed` (host) / card `confirmed` + `show_up` (host, 3+ walks);
+  home_feed `to_confirm`; `complete_walk(walk_id, absent_ids=None)` -> absent walkers become `no_show` (no points, not
+  met, in-app note only). `common.show_up(u)`; 🎯 badge in `badges_for`. Client: calendar.py, Dialogs/AddCalendar,
+  Dialogs/RollCall.
+- **Host again:** `walk_copy(walk_id)` (host: everything + crew count; others: route only), `#plan/again/<id>` ->
+  WalkEditor(copy_of); `create_walk` takes `copy_of` + `invite_crew` (crew only when the caller hosted the original) and
+  sets `walks.repeat_of`; `common.edition_of(w)` follows it for "🔁 Weekly walk · edition N".
+- **Stop topics:** `ui.TOPICS` (5 per stop kind) + `ui.topic_for(walk_id, i, kind, n)`, shown by Items/TimelineStop
+  (`.tl-topic`, 🔀 cycles locally). No server or schema change.
+- **Demo walks roll forward:** `seed.refresh_demo_dates()` (called from ensure_seeded) moves upcoming demo walks that
+  slipped into the past forward by whole weeks, so Discover and the map never look empty. Real walks are never moved.
+- Newer columns are read with `common.col(row, name)` and written with `set_col` (guarded) so the app keeps working
+  until the user accepts the Schema Mismatch.
 
 ## How things are done here
 
@@ -72,6 +103,9 @@ Addresses (unchanged): `#landing #discover #map #plan #plan/from/<place> #edit/<
 - Watch section (`#watch` on Landing): YouTube iIDuAWF-BzI via `data-yt-film` (cc.js swaps in a youtube-nocookie player).
 - Server modules pass `anvil validate` with type annotations only (`fields: dict = dict(...)`); seo_routes/legal_server are kit files.
 - `python -I` hides PyYAML: run check.py without -I.
+- `tools/assets.py` rewrites anvil.yaml in block style when a hash changes; keep the file's own format and change only
+  the `?v=` hashes (and your schema lines).
+- Public pages (WalkPublic) load their data on show with `call_s` (no spinner) so the "Lacing up" state draws first.
 
 ## Privacy & Terms (legal kit)
 

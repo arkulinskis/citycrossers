@@ -3,7 +3,9 @@
     #landing           the landing page (also what visitors see for every member page)
     #discover          home: the swipe deck, invites, walkers to meet        #map           the snack map
     #plan              plan a walk          #plan/from/<place id>   starting at a place     #edit/<walk id>
-    #walk/<walk id>    a walk               #walks[/tab]            my walks (upcoming, hosting, invites, pending, past)
+    #plan/again/<walk id>   host it again next week (or walk its route again)
+    #walk/<walk id>    a walk (visitors: the public walk page, Pages/WalkPublic; shared as /w/<id>)
+    #walks[/tab]       my walks (upcoming, hosting, invites, pending, past)
     #people            connections          #u/<user id>            a walker's profile      #me     my profile
     #me/edit           edit my profile      #welcome                first-time profile set-up
     #journey  #perks  #admin  #safety (also public)  #notifications
@@ -39,6 +41,10 @@ def _pick(parts):
         if head == "safety":
             from .Pages.Safety import Safety
             return Safety, {"public": True}, None, "landing", "Safety center · CityCrossers"
+        if head == "walk" and arg:
+            state.after_login(route)  # Join / Log in on the public page come back to this walk
+            from .Pages.WalkPublic import WalkPublic
+            return WalkPublic, {"walk_id": arg}, None, "landing", "A walk · CityCrossers"
         if head not in ("", "landing", "discover"):
             state.after_login(route)
         from .Pages.Landing import Landing
@@ -51,6 +57,9 @@ def _pick(parts):
     if head == "map":
         from .Pages.MapPage import MapPage
         return MapPage, {}, "map", "", "The snack map · CityCrossers"
+    if head == "plan" and arg == "again" and len(parts) > 2:
+        from .Pages.WalkEditor import WalkEditor
+        return WalkEditor, {"copy_of": parts[2]}, "plan", "", "Host it again · CityCrossers"
     if head == "plan":
         from .Pages.WalkEditor import WalkEditor
         start = parts[2] if arg == "from" and len(parts) > 2 else None

@@ -17,6 +17,12 @@
       </div>
 
       <div class="cc-alert berry" anvil:name="invite_alert"><span class="ico" aria-hidden="true">💌</span><span><b anvil:dom-node="invite_text"></b> Answer them on the right.</span></div>
+      <div class="cc-alert sky cc-confirm" anvil:name="confirm_alert" role="group" aria-label="Still coming?"><span class="ico" aria-hidden="true">🗓️</span>
+        <span class="cc-grow"><b anvil:dom-node="confirm_title"></b> <span anvil:dom-node="confirm_sub"></span></span>
+        <div class="cc-row cc-confirm-acts">
+          <anvil-component type="Button" name="confirm_yes_button" prop:text="Yes, see you there" prop:role='["cc-btn", "sm"]'></anvil-component>
+          <anvil-component type="Button" name="confirm_no_button" prop:text="Can’t make it" prop:role='["cc-btn", "ghost", "sm"]'></anvil-component>
+        </div></div>
       <div class="cc-alert sky" anvil:name="friend_alert"><span class="ico" aria-hidden="true">👋</span><span><b anvil:dom-node="friend_text"></b> <a href="#people">Say hi</a></span></div>
       <div class="cc-alert" anvil:name="pledge_alert"><span class="ico" aria-hidden="true">🛟</span><span class="cc-grow"><b>Take the 20-second safety pledge</b> before your first walk with new people (+10 pts).</span>
         <anvil-component type="Button" name="pledge_button" prop:text="Take it" prop:role='["cc-btn", "sm"]'></anvil-component></div>

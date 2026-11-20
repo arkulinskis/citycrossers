@@ -9,11 +9,14 @@ walking, crossed with a little Tinder (swipe on group walks) and a little Linked
 
 | Area | What it does |
 | --- | --- |
-| **Landing page** | Full marketing page: a "Watch" section with the YouTube pitch video (cover image until you press play), how it works, the "break manifesto", features, points & perks, partner cafés, safety, FAQ. |
+| **Landing page** | Full marketing page: "Open walks this week" (up to 3 real public walks with spots, hidden when there are none), a "Watch" section with the YouTube pitch video (cover image until you press play), how it works, the "break manifesto", features, points & perks, partner cafés, safety, FAQ. |
+| **Public walk pages** | A shared walk link (`/w/<id>`, also in email invites) shows visitors the walk itself, no account needed: vibe, date and time in their time zone, km, pace, food stops, route map and stops, the host's first name and level, "4 of 8 going · 4 spots left". "Join this walk" signs them up and carries on with the join. `/w/<id>` gives WhatsApp, iMessage, Facebook and Meetup a link card and search engines a schema.org Event. Meeting spot, crew and chat stay members-only. |
 | **Discover** | Swipe deck of walks ranked by a match score (pace, distance, interests). Swipe right to join or request, left to pass. Plus "walkers to meet" cards. |
 | **Map** | Leaflet map of community-pinned places (cafés, food, parks, viewpoints, water, rest), partner deals and walk starts. Anyone can propose a place. |
 | **Plan a walk** | Click the map to build a route, or add existing places. Live distance/time/break estimates, warnings for long stretches without a break, vibes, tags, friends-only or public visibility, host approval, invites. |
-| **Walk page** | Route timeline with ETAs and break lengths, suggested stops with group voting, crew and join requests, group chat, walk-day weather (Open-Meteo), safety panel, "share my plan", invite by email, mark complete. |
+| **Walk page** | Route timeline with ETAs and break lengths and a conversation topic at every stop (🔀 for another), suggested stops with group voting, crew and join requests, group chat, walk-day weather (Open-Meteo), safety panel, "share my plan", invite by email (host or walkers going only, 10 a day), "🔁 Weekly walk · edition N". |
+| **Show-up kit** | "Sunday's walk: still in?" 48 h before (Discover + walk page): Yes shows ✓ to the host, "Can't make it" frees the spot for the waitlist. 📅 Add to calendar (.ics made in the browser, or Google Calendar). The host sees "5 of 7 confirmed" and, on requests, "Came to 9 of 10 walks" (after 3+ walks). Completing a walk is a roll call: unticked walkers get no points and aren't counted as met. 🎯 Reliable walker badge. |
+| **Host again** | On a walk they hosted, "🔁 Host again next week" opens the planner with the same route, stops, title, vibe, pace and size on the same weekday and time next week, and "Invite last time's crew" ticked. Walkers who went get "🗺️ Walk this route again" (route only). |
 | **After a walk** | Review each stop, endorse your crew, write it into your Journey. |
 | **People & profiles** | Connections, search, suggestions, LinkedIn-style profiles with stats, endorsements, badges, public reviews ("taste map") and journey highlights. |
 | **My Journey** | Personal timeline of walks, journal entries and reviews, with private "notes to future me" and public/private toggles. |
@@ -24,7 +27,7 @@ walking, crossed with a little Tinder (swipe on group walks) and a little Linked
 ## Getting it running in Anvil
 
 1. In the Anvil editor, pull this branch from GitHub (Version History → Git), or clone the repo as a new app.
-2. Anvil will offer to **apply the data table schema** from `anvil.yaml`. Accept it (16 tables).
+2. Anvil will offer to **apply the data table schema** from `anvil.yaml`. Accept it (18 tables).
 3. Run the app and sign up.
    - The email listed in `ADMIN_EMAILS` (`server_code/common.py`) becomes an **admin** automatically.
 4. The first signed-in visit loads **demo data** (London landmarks, fictional cafés, demo walkers, walks, deals).
@@ -46,16 +49,19 @@ client_code/                 native Anvil Forms (Python + HTML templates)
   mapkit.py        the Leaflet engine (Components/MapView wraps it)
   avatar.py        draws avatars into DOM nodes
   Layouts/Shell    header, walker menu, notifications poll, footer, phone tab bar
-  Pages/           Landing Discover MapPage WalkEditor WalkDetail MyWalks People Profile ProfileEdit
+  calendar.py      .ics text + Google Calendar link for a walk
+  Pages/           Landing Discover MapPage WalkEditor WalkDetail WalkPublic MyWalks People Profile ProfileEdit
                    Journey Perks Admin Safety Notifications
   Items/           RepeatingPanel rows and cards (WalkCard, PersonCard, TimelineStop, Chip, Option ...)
   Components/      MapView, Avatar, AvatarStack, Strip, Person, Stars, Chips
   Dialogs/         AuthDialog SafetyPledge PlaceForm Review ReviewPick Entry Report Invite PlaceDetails
-                   Prompt Endorse PickWalk Partner Info
+                   Prompt Endorse PickWalk Partner Info AddCalendar RollCall
 server_code/
   common.py        users, ids, points, levels, notifications, route maths, match score
   serial.py        rows → client-safe dicts (no emails or emergency contacts leak)
-  api_walks.py     walks, membership, stops & votes, chat, completion, home feed, map data
+  api_walks.py     walks, copy (host again), membership, confirm spot, email invites, stops & votes, chat, roll call, home feed, map data
+  api_public.py    public walks for visitors (no sign-in; never the meeting spot, crew or chat)
+  walk_pages.py    /w/<id>: link cards (Open Graph) + schema.org Event, then on to /#walk/<id>
   api_social.py    friends, profiles, endorsements, reports, notifications
   api_me.py        profile, places, reviews, journal, perks
   api_admin.py     admin tools
@@ -84,9 +90,9 @@ What this project uses besides its own code. Generated by `APP_MAKER/tools/libra
 | [YouTube embeds](https://developers.google.com/youtube/player_parameters) | Outside web service | Plays a YouTube video inside the page (the privacy-friendlier youtube-nocookie address). |
 | [Google Fonts](https://fonts.google.com) | Loaded from a CDN | Bricolage Grotesque, DM Sans |
 
-**Built into the browser:** Geolocation, localStorage, Clipboard.
+**Built into the browser:** Geolocation, localStorage, Clipboard, File downloads (Blob).
 
-**Anvil platform:** Anvil, Anvil Data Tables, Anvil JS bridge (anvil.js), Anvil Users, Anvil Google service, Anvil HTTP, Anvil Email, Anvil timezones (anvil.tz).
+**Anvil platform:** Anvil, Anvil Data Tables, Anvil Email, Anvil JS bridge (anvil.js), Anvil Secrets, Anvil Users, Anvil Google service, Anvil HTTP, Anvil timezones (anvil.tz).
 
 **Build and test tools (not shipped):** axe-core, Node.js, Headless Chrome (DevTools Protocol), PyYAML.
 

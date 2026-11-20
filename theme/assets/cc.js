@@ -82,7 +82,28 @@ window.cc = (function () {
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  return { swipe: swipe, fly: fly, confetti: confetti, copy: copy, scrollTo: scrollTo };
+  // The browser's time zone at a wall-clock moment (the walk's start): JSON {name: "America/Toronto", offset: -300},
+  // offset in minutes east of UTC at that date (so summer/winter time is right). Walks store it for emails and previews.
+  function tz(y, mo, d, h, mi) {
+    var name = '';
+    try { name = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) {}
+    var at = (y ? new Date(y, mo - 1, d, h || 0, mi || 0) : new Date());
+    return JSON.stringify({ name: name, offset: -at.getTimezoneOffset() });
+  }
+
+  // Save text as a file on the device (the .ics calendar file).
+  function download(text, filename, type) {
+    var blob = new Blob([text], { type: type || 'text/plain' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+    return true;
+  }
+
+  return { swipe: swipe, fly: fly, confetti: confetti, copy: copy, scrollTo: scrollTo, tz: tz, download: download };
 })();
 
 // Watch section: swap the video's cover for YouTube's player (privacy-enhanced) only when it's pressed.

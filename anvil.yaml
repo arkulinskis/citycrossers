@@ -74,6 +74,29 @@ db_schema:
       type: datetime
     server: full
     title: Discounts
+  email_invites:
+    client: none
+    columns:
+    - admin_ui:
+        width: 200
+      name: inviter
+      target: users
+      type: link_single
+    - admin_ui:
+        width: 200
+      name: walk
+      target: walks
+      type: link_single
+    - admin_ui:
+        width: 200
+      name: to_hash
+      type: string
+    - admin_ui:
+        width: 200
+      name: created
+      type: datetime
+    server: full
+    title: EmailInvites
   endorsements:
     client: none
     columns:
@@ -708,6 +731,10 @@ db_schema:
         width: 200
       name: updated
       type: datetime
+    - admin_ui:
+        width: 200
+      name: confirmed_at
+      type: datetime
     server: full
     title: WalkMembers
   walks:
@@ -798,6 +825,19 @@ db_schema:
         width: 200
       name: is_demo
       type: bool
+    - admin_ui:
+        width: 200
+      name: repeat_of
+      target: walks
+      type: link_single
+    - admin_ui:
+        width: 200
+      name: tz_name
+      type: string
+    - admin_ui:
+        width: 200
+      name: tz_offset
+      type: number
     server: full
     title: Walks
 dependencies: []
@@ -810,7 +850,7 @@ native_deps:
   head_html: |-
     <!-- Prepsto feedback panel (the only feedback channel): every Submit feedback link (data-prepsto-open) opens it -->
     <script src="https://prepsto.com/_/theme/widget.js" data-prepsto="wzrzr2f" data-button="false" data-label="Submit feedback" async></script>
-    <script src="_/theme/legal-kit.js?v=2162143a36"></script>
+    <script src="_/theme/legal-kit.js?v=eb64c99fae"></script>
     <!-- seo:start (APP_MAKER/seo: edit seo/apps/citycrossers.json and run seo.py, not here) -->
     <link rel="canonical" href="https://citycrossers.com/">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -848,9 +888,9 @@ native_deps:
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin></script>
     <link rel="stylesheet" href="_/theme/icons.css?v=8f508d76cd">
-    <link rel="stylesheet" href="_/theme/app.css?v=332cddc0b4">
+    <link rel="stylesheet" href="_/theme/app.css?v=66282d3b11">
     <script src="_/theme/app-kit.js?v=21cd7c4f18"></script>
-    <script src="_/theme/cc.js?v=38ed2b99b9"></script>
+    <script src="_/theme/cc.js?v=d9ba8e1ad4"></script>
     <link rel="icon" type="image/svg+xml" href="_/theme/logo.svg">
     <link rel="apple-touch-icon" href="_/theme/apple-touch-icon.png">
     <meta name="theme-color" content="#17A673">

@@ -1,4 +1,6 @@
-"""Walks: create, edit, join, invite, stops, chat, complete."""
+"""Walks: create, edit, copy (host again), join, invite, confirm spots, stops, chat, roll call + complete."""
+import hashlib
+import time
 from datetime import timedelta
 
 import anvil.server
@@ -9,11 +11,15 @@ from anvil.tables import app_tables
 
 from .common import (current_user, rid, by_id, now, aware, user_card, notify, award, membership,
                      going_count, are_friends, friends_of, route_stats, co_walker_ids, match_score,
-                     PACES, STOP_KINDS)
+                     col, set_col, clean_tz, fmt_local, show_up, edition_of, PACES, STOP_KINDS)
 from .serial import walk_summary, stop_dict, planned_stops, active_discounts
 from . import seed
 
 ACTIVE = ('planning', 'confirmed')
+CONFIRM_WINDOW = timedelta(hours=48)   # "Still in?" shows to people going this long before the start
+EMAIL_INVITES_PER_DAY = 10             # email invites one walker can send in a rolling 24 hours
+EMAILS_PER_ADDRESS_PER_DAY = 2         # emails one address can get from anyone in 24 hours
+INVITE_SENT = "Invite sent! If they join, you'll see them in the crew."
 
 
 def _get_walk(walk_id):
@@ -118,7 +124,7 @@ def _promote_waitlist(w):
            link='walk/' + rid(w), walk=w, email_subject="You're off the waitlist 🎉")
 
 
-def _invite_users(w, inviter, user_ids):
+def _invite_users(w, inviter, user_ids, message=None):
   n = 0
   for uid in user_ids or []:
     target = by_id(app_tables.users, uid)
@@ -128,27 +134,155 @@ def _invite_users(w, inviter, user_ids):
     if m and m['status'] in ('going', 'invited', 'requested', 'waitlist'):
       continue
     _set_member(w, target, 'invited', invited_by=inviter)
-    notify(target, 'invite', f"{inviter['display_name']} invited you on “{w['title']}”. Snacks included.",
+    notify(target, 'invite', message or f"{inviter['display_name']} invited you on “{w['title']}”. Snacks included.",
            link='walk/' + rid(w), walk=w, from_user=inviter,
            email_subject=f"{inviter['display_name']} invited you on a long walk 🥾")
     n += 1
   return n
 
 
+def _set_tz(w, data):
+  """The host's time zone at the walk's start, sent by their browser (see common.walk_tz)."""
+  name, off = clean_tz(data.get('tz_name'), data.get('tz_offset'))
+  if off is not None:
+    set_col(w, 'tz_name', name)
+    set_col(w, 'tz_offset', off)
+
+
+def _upcoming(w):
+  return w['status'] in ACTIVE and not (w['start'] and aware(w['start']) < now())
+
+
+def walk_url(w):
+  """The shareable address of a walk: /w/<id> serves link previews and opens the walk (server_code/walk_pages.py)."""
+  return anvil.server.get_app_origin().rstrip('/') + '/w/' + rid(w)
+
+
+# ---------------------------------------------------------------- email invites (table email_invites)
+# One row per email invite: who sent it, which walk, and a fingerprint of the address (never the address). It gives
+# the daily limit, stops the same address being emailed twice about a walk, and lets someone who signs up with that
+# address find their invite (get_walk). Before the user accepts the new table, a per-session count stands in.
+
+def _email_hash(email):
+  return hashlib.sha256(('citycrossers-invite:' + (email or '').strip().lower()).encode('utf-8')).hexdigest()[:40]
+
+
+def _invite_table():
+  try:
+    return app_tables.email_invites
+  except Exception:
+    return None
+
+
+def _invites_sent_today(u):
+  t, since = _invite_table(), now() - timedelta(hours=24)
+  if t is not None:
+    try:
+      return len(t.search(inviter=u, created=q.greater_than(since)))
+    except Exception:
+      pass
+  cut = time.time() - 86400
+  return len([x for x in (anvil.server.session.get('cc_email_invites') or []) if x > cut])
+
+
+def _skip_email(w, h):
+  """True when this address already got an invite to this walk, or its daily cap of emails from anyone."""
+  t = _invite_table()
+  if t is None:
+    return False
+  try:
+    if len(t.search(walk=w, to_hash=h)):
+      return True
+    return len(t.search(to_hash=h, created=q.greater_than(now() - timedelta(hours=24)))) >= EMAILS_PER_ADDRESS_PER_DAY
+  except Exception:
+    return False
+
+
+def _log_invite(u, w, h):
+  t = _invite_table()
+  try:
+    if t is not None:
+      t.add_row(inviter=u, walk=w, to_hash=h, created=now())
+      return
+  except Exception:
+    pass
+  sent = [x for x in (anvil.server.session.get('cc_email_invites') or []) if x > time.time() - 86400]
+  anvil.server.session['cc_email_invites'] = sent + [time.time()]
+
+
+def _claim_email_invite(w, u):
+  """Someone invited by email who then made an account with that address: the invite becomes a normal walk invite
+  (so a friends-only walk opens for them, and joining skips the host's approval like any invite)."""
+  t = _invite_table()
+  if t is None or not u['email'] or not _upcoming(w) or membership(w, u) is not None:
+    return False
+  try:
+    rows = list(t.search(walk=w, to_hash=_email_hash(u['email'])))
+  except Exception:
+    return False
+  if not rows:
+    return False
+  _set_member(w, u, 'invited', invited_by=rows[0]['inviter'])
+  return True
+
+
 # ---------------------------------------------------------------- create / edit
 
 @anvil.server.callable(require_user=True)
 def create_walk(data):
+  """data: the editor's fields + stops, invite_ids, tz_name/tz_offset (the host's browser), and for "Host again"
+  copy_of (the walk it repeats) + invite_crew (invite the people who went last time; only when I hosted it)."""
   u = current_user()
   _require_pledge(u)
   fields, stops = _clean_walk_data(data)
   w = app_tables.walks.add_row(host=u, status='planning', created=now(), updated=now(), is_demo=False, **fields)
+  _set_tz(w, data)
   _save_stops(w, stops, u)
   _recompute(w)
   _set_member(w, u, 'going', role='host')
   award(u, 10, f"Planned “{w['title']}”")
+  src = by_id(app_tables.walks, data.get('copy_of')) if data.get('copy_of') else None
+  if src is not None and src['host'] == u:
+    set_col(w, 'repeat_of', src)  # a weekly series: the walk page shows "edition N"
+    if data.get('invite_crew'):
+      crew = [rid(m['user']) for m in app_tables.walk_members.search(walk=src, status='going')
+              if m['user'] is not None and m['user'] != u]
+      _invite_users(w, u, crew, message=f"{u['display_name']} is hosting “{w['title']}” again and saved you a "
+                                        f"spot from last time. Coming? 🔁")
   _invite_users(w, u, data.get('invite_ids'))
   return rid(w)
+
+
+@anvil.server.callable(require_user=True)
+def walk_copy(walk_id):
+  """A walk as a starting point for a new one (#plan/again/<id>). The host gets everything (title, description,
+  route, pace, size, meeting spot, how many went last time) dated the same weekday and time next week; anyone else
+  who can see the walk gets the route only, with no meeting spot and nobody to invite."""
+  u = current_user()
+  w = _get_walk(walk_id)
+  if not _can_view(w, u):
+    raise Exception("This walk is for the host's friends only.")
+  is_host = w['host'] == u
+  orig = aware(w['start']) or now()
+  weeks = 1
+  while orig + timedelta(days=7 * weeks) < now() + timedelta(minutes=30):
+    weeks += 1
+  crew = 0
+  if is_host:
+    crew = len([m for m in app_tables.walk_members.search(walk=w, status='going')
+                if m['user'] is not None and m['user'] != u])
+  return {
+    'id': rid(w), 'is_host': is_host, 'title': w['title'] or '', 'description': (w['description'] or '') if is_host else '',
+    'orig_start': orig, 'start': orig + timedelta(days=7 * weeks), 'weeks': weeks,
+    'pace': w['pace'] or 'steady', 'vibe': w['vibe'] or 'urban', 'tags': list(w['tags'] or []),
+    'max_walkers': (w['max_walkers'] or 8) if is_host else 8,
+    'visibility': (w['visibility'] or 'friends') if is_host else 'friends',
+    'approval_required': bool(w['approval_required']) if is_host else True,
+    'city': w['city'] or '', 'meeting_note': (w['meeting_note'] or '') if is_host else '',
+    'stops': [{'name': s['name'] or 'Stop', 'kind': s['kind'] or 'rest', 'lat': s['lat'], 'lng': s['lng'],
+               'place_id': rid(s['place']) if s['place'] else None, 'note': s['note'] or ''} for s in planned_stops(w)],
+    'crew': crew, 'edition_next': edition_of(w) + 1 if is_host else 1,
+  }
 
 
 @anvil.server.callable(require_user=True)
@@ -162,6 +296,7 @@ def update_walk(walk_id, data):
   if fields['max_walkers'] < going_count(w):
     fields['max_walkers'] = going_count(w)
   w.update(**fields)
+  _set_tz(w, data)
   _save_stops(w, stops, u)
   _recompute(w)
   _invite_users(w, u, data.get('invite_ids'))
@@ -194,21 +329,37 @@ def get_walk_for_edit(walk_id):
 def get_walk(walk_id):
   u = current_user()
   w = _get_walk(walk_id)
+  _claim_email_invite(w, u)
   if not _can_view(w, u):
     raise Exception("This walk is for the host's friends only.")
   is_host = w['host'] == u
+  hostish = is_host or bool(u['is_admin'])
   my = membership(w, u)
   my_status = my['status'] if my else None
   members = list(app_tables.walk_members.search(walk=w))
   groups = {'going': [], 'requested': [], 'invited': [], 'waitlist': []}
+  walkers = confirmed = 0
   for m in members:
     if m['user'] is None or m['status'] not in groups:
       continue
     card = user_card(m['user'])
     card['role'] = m['role'] or 'walker'
     card['message'] = m['message'] or ''
+    if m['status'] == 'going' and card['role'] != 'host':
+      walkers += 1
+      if col(m, 'confirmed_at'):
+        confirmed += 1
+        if hostish:
+          card['confirmed'] = True  # ✓ next to their name, for the host
+    if hostish and m['status'] in ('requested', 'waitlist'):
+      su = show_up(m['user'])
+      if su['total'] >= 3:  # "Came to 9 of 10 walks", only once there's a pattern
+        card['show_up'] = su
     groups[m['status']].append(card)
   insider = is_host or my_status == 'going' or u['is_admin']
+  start = aware(w['start'])
+  upcoming = _upcoming(w)
+  my_confirmed = bool(my and col(my, 'confirmed_at'))
   if not is_host and not u['is_admin']:
     groups['requested'] = []
     groups['invited'] = [{'id': None}] * len(groups['invited'])  # only a count for non-hosts
@@ -229,6 +380,11 @@ def get_walk(walk_id):
     'members': groups, 'messages': messages[-80:], 'insider': insider,
     'can_invite': is_host or my_status == 'going',
     'is_host': is_host, 'is_admin': bool(u['is_admin']),
+    'my_confirmed': my_confirmed,
+    'confirm_needed': (my_status == 'going' and not is_host and upcoming and not my_confirmed
+                       and start is not None and start - now() <= CONFIRM_WINDOW),
+    'crew_confirmed': {'confirmed': confirmed, 'walkers': walkers} if hostish else None,
+    'edition': edition_of(w),
     'friends_with_host': are_friends(u, w['host']) if w['host'] is not None and not is_host else False,
     'my_reviews': [rid(r['place']) for r in app_tables.reviews.search(user=u, walk=w) if r['place'] is not None],
   })
@@ -256,7 +412,9 @@ def my_walks():
         res['requests_to_review'] += s['requests']
         res['hosting'].append(s)
       elif st == 'going':
-        res['upcoming'].append(walk_summary(w, u))
+        s = walk_summary(w, u)
+        s['confirmed'] = bool(col(m, 'confirmed_at'))
+        res['upcoming'].append(s)
       elif st == 'invited':
         res['invites'].append(walk_summary(w, u))
       elif st in ('requested', 'waitlist'):
@@ -370,22 +528,47 @@ def host_decide(walk_id, user_id, accept):
   return 'declined'
 
 
+def _leave(w, u, why="can't make"):
+  m = membership(w, u)
+  if m is None:
+    return True
+  was_going = m['status'] == 'going'
+  m.update(status='left', updated=now())
+  set_col(m, 'confirmed_at', None)
+  if was_going:
+    notify(w['host'], 'left', f"{u['display_name']} {why} “{w['title']}” any more.", link='walk/' + rid(w),
+           walk=w, from_user=u)
+    _promote_waitlist(w)  # the first person waiting gets the spot (and a notification + email)
+  return True
+
+
 @anvil.server.callable(require_user=True)
 def leave_walk(walk_id):
   u = current_user()
   w = _get_walk(walk_id)
   if w['host'] == u:
     raise Exception("Hosts can't leave their own walk. Cancel it instead, or hand it over.")
+  return _leave(w, u)
+
+
+@anvil.server.callable(require_user=True)
+def confirm_spot(walk_id, coming):
+  """The "Still in?" check before a walk. coming=True: I'll be there (the host sees ✓ next to my name).
+  coming=False: free my spot now, so the first person on the waitlist gets it."""
+  u = current_user()
+  w = _get_walk(walk_id)
+  if w['host'] == u:
+    raise Exception("You're the host, so you're always in.")
   m = membership(w, u)
-  if m is None:
-    return True
-  was_going = m['status'] == 'going'
-  m.update(status='left', updated=now())
-  if was_going:
-    notify(w['host'], 'left', f"{u['display_name']} can't make “{w['title']}” any more.", link='walk/' + rid(w),
-           walk=w, from_user=u)
-    _promote_waitlist(w)
-  return True
+  if m is None or m['status'] != 'going':
+    raise Exception("Only people going on this walk can confirm a spot.")
+  if not _upcoming(w):
+    raise Exception("This walk has already started or ended.")
+  if not coming:
+    _leave(w, u, why="answered “still in?”: can't make")
+    return 'left'
+  set_col(m, 'confirmed_at', now())
+  return 'confirmed'
 
 
 @anvil.server.callable(require_user=True)
@@ -399,34 +582,56 @@ def invite_to_walk(walk_id, user_ids):
 
 
 @anvil.server.callable(require_user=True)
-def invite_by_email(walk_id, email):
+def invite_by_email(walk_id, email, tz=None):
+  """Email someone an invite to a walk. Only the host or someone going may send one, at most EMAIL_INVITES_PER_DAY
+  a day; one address gets one email per walk (and EMAILS_PER_ADDRESS_PER_DAY a day from anyone). The answer is
+  the same whether or not the address has an account (members get an in-app invite instead), so nobody can use
+  it to find out who is on CityCrossers. tz = {'name', 'offset'} from the inviter's browser: the time zone for
+  the email's date when the walk was saved before walks stored one."""
   u = current_user()
   w = _get_walk(walk_id)
+  m = membership(w, u)
+  if w['host'] != u and not (m and m['status'] == 'going'):
+    raise Exception("Only people going on this walk can invite others.")
+  if not _upcoming(w):
+    raise Exception("This walk has already started or ended, so there's nothing to invite people to.")
   email = (email or '').strip().lower()
-  if '@' not in email or '.' not in email.split('@')[-1]:
+  if len(email) > 254 or ' ' in email or '@' not in email or '.' not in email.split('@')[-1]:
     raise Exception("That doesn't look like an email address.")
+  url = walk_url(w)
+  if _invites_sent_today(u) >= EMAIL_INVITES_PER_DAY:
+    raise Exception(f"That's {EMAIL_INVITES_PER_DAY} email invites today, the daily limit. Share the walk's link "
+                    f"instead: {url}")
+  h = _email_hash(email)
+  if _skip_email(w, h):
+    _log_invite(u, w, h)
+    return INVITE_SENT
   existing = app_tables.users.get(email=email)
   if existing is not None:
     _invite_users(w, u, [rid(existing)])
-    return "They're already on CityCrossers, so we sent an in-app invite."
-  url = anvil.server.get_app_origin() + "/#walk/" + rid(w)
-  start = aware(w['start'])
-  when = start.strftime('%A %d %B, %H:%M UTC') if start else 'soon'
+    _log_invite(u, w, h)
+    return INVITE_SENT
+  fb = (tz.get('name'), tz.get('offset')) if isinstance(tz, dict) else None
+  when = fmt_local(w, fallback=fb, long=True) or 'soon'
+  food = len([s for s in planned_stops(w) if s['kind'] in ('cafe', 'food', 'treat')])
   try:
     anvil.email.send(
       to=email, from_name="CityCrossers", subject=f"{u['display_name']} invited you on a long walk 🥐",
       html=(f"<div style='font-family:sans-serif;font-size:16px;line-height:1.55;color:#1E2A28'>"
             f"<h2 style='margin:0 0 8px'>{_e(w['title'])}</h2>"
-            f"<p><b>{_e(u['display_name'])}</b> is planning a long walk on <b>{when}</b>, "
-            f"about {w['distance_km'] or '?'} km with snack stops along the way, and wants you to come.</p>"
+            f"<p><b>{_e(u['display_name'])}</b> is going on a long walk on <b>{_e(when)}</b>, about "
+            f"{w['distance_km'] or '?'} km with {food} food stop{'s' if food != 1 else ''} along the way, and wants "
+            f"you to come.</p>"
             f"<p><a href='{url}' style='background:#17A673;color:#fff;padding:12px 20px;border-radius:999px;"
-            f"text-decoration:none;font-weight:bold'>See the route &amp; join</a></p>"
-            f"<p style='color:#777;font-size:13px'>CityCrossers is a walking club for long city walks with breaks "
-            f"and food stops. You got this because a friend typed your address.</p></div>"))
+            f"text-decoration:none;font-weight:bold'>See the walk &amp; join</a></p>"
+            f"<p style='color:#777;font-size:13px'>The link shows the route and stops, no account needed. "
+            f"CityCrossers is a walking club for long city walks with breaks and food stops. You got this because "
+            f"{_e(u['display_name'])} typed your address; we don't keep it or email you again unless you join.</p></div>"))
   except Exception as e:
     print("invite email failed", e)
-    raise Exception("Couldn't send the email right now. Share the link instead: " + url)
-  return "Invite sent! We'll let you know when they join."
+    raise Exception("Couldn't send the email right now. Share the walk's link instead: " + url)
+  _log_invite(u, w, h)
+  return INVITE_SENT
 
 
 def _e(s):
@@ -545,7 +750,10 @@ def post_message(walk_id, body):
 # ---------------------------------------------------------------- lifecycle
 
 @anvil.server.callable(require_user=True)
-def complete_walk(walk_id):
+def complete_walk(walk_id, absent_ids=None):
+  """The host's roll call: everyone going gets points, km and new faces, except the walkers in absent_ids (user ids
+  the host unticked): they become no_show (no points, not counted as met) and get a kind in-app note, no email.
+  No absent_ids = everyone came (the old behaviour)."""
   u = current_user()
   w = _get_walk(walk_id)
   _require_host(w, u)
@@ -554,7 +762,18 @@ def complete_walk(walk_id):
   if w['start'] and aware(w['start']) > now():
     raise Exception("You can mark the walk complete once it has started.")
   km = w['distance_km'] or 0
-  going = [m['user'] for m in app_tables.walk_members.search(walk=w, status='going') if m['user'] is not None]
+  absent = set(str(x) for x in (absent_ids or []) if x)
+  going = []
+  for m in app_tables.walk_members.search(walk=w, status='going'):
+    who = m['user']
+    if who is None:
+      continue
+    if rid(who) in absent and who != w['host']:
+      m.update(status='no_show', updated=now())
+      notify(who, 'missed', f"The host's roll call for “{w['title']}” says we missed you. Life happens! "
+                            f"If that's not right, send the host a message.", link='walk/' + rid(w), walk=w)
+    else:
+      going.append(who)
   ids = set(x.get_id() for x in going)
   for walker in going:
     prev = co_walker_ids(walker, exclude_walk=w)
@@ -594,12 +813,16 @@ def home_feed():
   seed.ensure_seeded()
   from .api_social import suggestions, pending_counts
   mine = my_walks()
+  soon = now() + CONFIRM_WINDOW
   return {
     'deck': discover_walks(u),
     'upcoming': (mine['hosting'] + mine['upcoming'])[:6],
     'invites': mine['invites'],
     'suggestions': suggestions(u, 8),
     'counts': pending_counts(u),
+    # "Still in?": walks I'm going on (not hosting) that start within 48 hours and I haven't confirmed yet
+    'to_confirm': [s for s in mine['upcoming']
+                   if not s.get('confirmed') and s['start'] is not None and now() < s['start'] <= soon],
   }
 
 
